@@ -1,0 +1,48 @@
+{
+  "name": "vendure-plugin-banner",
+  "version": "1.0.0",
+  "description": "Plugin template",
+  "author": "Arthur Nestererenko <arthur.nesterenko.dev@gmail.com>",
+  "repository": "https://github.com/vendure-ecommerce/plugin-template",
+  "license": "MIT",
+  "private": false,
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "run:server": "ts-node ./dev-server/index.ts",
+    "run:worker": "ts-node ./dev-server/index-worker.ts",
+    "watch": "ts-node-dev  ./dev-server/index.ts",
+    "start": "concurrently yarn:run:*",
+    "build": "rimraf dist && tsc",
+    "test": "jest --preset=\"ts-jest\"",
+    "generate-types": "graphql-codegen --config ./codegen.json"
+  },
+  "devDependencies": {
+    "@graphql-codegen/add": "5.0.0",
+    "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/typescript": "4.0.1",
+    "@graphql-codegen/typescript-compatibility": "2.1.5",
+    "@graphql-codegen/typescript-operations": "4.0.1",
+    "@types/jest": "29.5.11",
+    "@vendure/admin-ui-plugin": "2.1.6",
+    "@vendure/asset-server-plugin": "2.1.6",
+    "@vendure/core": "2.1.6",
+    "@vendure/testing": "2.1.6",
+    "@vendure/ui-devkit": "2.1.6",
+    "better-sqlite3": "^9.3.0",
+    "concurrently": "^8.2.2",
+    "jest": "29.7.0",
+    "rimraf": "^5.0.5",
+    "ts-jest": "29.1.2",
+    "ts-node": "10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "5.3.3"
+  }
+}
