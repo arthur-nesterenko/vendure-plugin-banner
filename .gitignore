@@ -31,3 +31,5 @@ out-tsc
 speed-measure-plugin*.json
 tmp
 typings
+admin-ui/
+static
