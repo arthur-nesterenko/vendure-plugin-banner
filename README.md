@@ -1,36 +1,92 @@
-# Vendure plugin template
+This is a plugin for the [Vendure e-commerce framework](https://www.vendure.io/) designed to enhance the visual appeal and interactivity of your e-commerce site. The Vendure Banner Plugin allows for the creation of dynamic banners that can be added to any page.
 
-1. Copy this directory and rename to `vendure-plugin-YOUR-PLUGIN-NAME`
-2. Update the `name` and `description` field in `package.json`
-4. Update this Readme: What does the plugin do? How can someone use your plugin in their project?
-5. Run `yarn` to install the dependencies
-6. Run `yarn start` to start the server
+## Getting Started
 
-The admin is now available at `http://localhost:3050/admin`. Login with _superadmin/superadmin_
+To integrate the Vendure Banner Plugin into your Vendure project, follow these steps:
 
-The shop GraphQL `http://localhost:3050/shop-api`. Here you can test your custom GraphQL query:
-```graphql
-{
-  exampleQuery
-}
-```
+1. **Installation**: Begin by adding the plugin to your project:
 
-## Testing
+    ```shell
+    npm install vendure-banner-plugin
+    ```
 
-1. Run `yarn test` to run the e2e test.
-2. Don't forget to implement your own!
+    or
 
-## Publishing to NPM
+    ```shell
+    yarn add vendure-banner-plugin
+    ```
 
-1. Make sure you are [logged in to NPM](https://docs.npmjs.com/cli/v9/commands/npm-login)
-2. `yarn build`
-3. `yarn publish`
+2. **Configuration**: Next, import and configure the plugin within your Vendure configuration:
 
-That's it!
+    ```typescript
+    import { BannerPlugin } from 'vendure-banner-plugin';
 
-(Maybe share your accomplishments in the [Vendure slack](https://join.slack.com/t/vendure-ecommerce/shared_invite/zt-1exzio25w-vjL5TYkyJZjK52d6jkOsIA)?
+    export const config: VendureConfig = {
+        // Other configuration options...
+        plugins: [
+            BannerPlugin,
+            AdminUiPlugin.init({
+                port: 3002,
+                route: 'admin',
+                app: compileUiExtensions({
+                    outputPath: path.join(__dirname, '../admin-ui'),
+                    extensions: [BannerPlugin.ui],
+                }),
+            }),
+        ],
+    };
+    ```
 
-## Next steps
+3. **Usage**: Once installed and configured, you can start creating and managing banners through the Vendure admin interface.
 
-1. Check out [the docs](https://www.vendure.io/docs/plugins/) to see the possibilities of a plugin
-2. Check out [GraphQL codegen](https://the-guild.dev/graphql/codegen) to generate Typescript types for your custom GraphQL types
+#### **GRAPHQL**
+
+    ```graphql
+    query GetBanners {
+      banners {
+        id
+        name
+        enabled
+        sections {
+          id
+          imageUrl
+          link
+          callToActionText
+        }
+      }
+    }
+    ```
+
+## Development
+
+#### **Install Dependencies**: Install the necessary dependencies using npm or yarn:
+
+    ```shell
+    npm install
+    ```
+    or
+    ```shell
+    yarn install
+    ```
+
+#### **Start Development Server**: To start the development server and test your changes in real-time, run:
+
+    ```shell
+    npm run start
+    ```
+    or
+    ```shell
+    yarn start
+    ```
+    This command will compile the plugin and watch for any changes, automatically recompiling as needed.
+
+#### **Building**: Once you are satisfied with your changes, build the plugin for production:
+
+    ```shell
+    npm run build
+    ```
+    or
+    ```shell
+    yarn build
+    ```
+    This command will compile the plugin into an optimized version ready for deployment.
