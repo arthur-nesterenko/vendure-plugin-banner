@@ -1,0 +1,79 @@
+<vdr-page-block>
+    <vdr-action-bar>
+        <vdr-ab-left>
+            <vdr-language-selector
+                [disabled]="isNew$ | async"
+                [availableLanguageCodes]="availableLanguages$ | async"
+                [currentLanguageCode]="languageCode$ | async"
+                (languageCodeChange)="setLanguage($event)"
+            ></vdr-language-selector>
+        </vdr-ab-left>
+        <vdr-ab-right>
+            <button
+                class="button primary"
+                *ngIf="isNew$ | async; else updateButton"
+                (click)="create()"
+                [disabled]="detailForm.pristine || detailForm.invalid"
+            >
+                {{ 'common.create' | translate }}
+            </button>
+            <ng-template #updateButton>
+                <button
+                    class="btn btn-primary"
+                    (click)="update()"
+                    [disabled]="detailForm.pristine || detailForm.invalid"
+                >
+                    {{ 'common.update' | translate }}
+                </button>
+            </ng-template>
+        </vdr-ab-right>
+    </vdr-action-bar>
+</vdr-page-block>
+
+<form class="form" [formGroup]="detailForm">
+    <vdr-page-block>
+        <vdr-card>
+            <div class="form-grid">
+                <vdr-form-field [label]="'banner-plugin.form.name' | translate" for="name">
+                    <input id="name" type="text" formControlName="name" />
+                </vdr-form-field>
+
+                <vdr-form-field [label]="'banner-plugin.form.enabled' | translate">
+                    <input type="checkbox" formControlName="enabled" />
+                </vdr-form-field>
+            </div>
+        </vdr-card>
+
+        <ng-container formArrayName="sections">
+            <ng-container *ngFor="let section of sections.controls; let i = index">
+                <vdr-card [formGroup]="detailForm">
+                    <banner-section
+                        [bannerSection]="bannerSections?.[i]"
+                        [section]="section"
+                    ></banner-section>
+                    <div class="add-section">
+                        <button
+                            *ngIf="bannerSections && bannerSections[i]?.id; else delete"
+                            class="button danger"
+                            (click)="destroySection(bannerSections?.[i])"
+                        >
+                            <clr-icon shape="trash"></clr-icon>
+                            {{ 'common.remove' | translate }}
+                        </button>
+                        <ng-template #delete>
+                            <button *ngIf="i > 0" class="btn btn-danger" (click)="deleteSection(i)">
+                                {{ 'common.remove' | translate }}
+                            </button>
+                        </ng-template>
+                    </div>
+                </vdr-card>
+            </ng-container>
+        </ng-container>
+        <vdr-card>
+            <button class="button primary" type="button" (click)="addSection()">
+                <clr-icon shape="plus" dir="left"></clr-icon>
+                {{ 'banner-plugin.section.add' | translate }}
+            </button>
+        </vdr-card>
+    </vdr-page-block>
+</form>

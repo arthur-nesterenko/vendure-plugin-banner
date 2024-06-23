@@ -1,0 +1,38 @@
+{
+    "banner-plugin": {
+        "common": {
+            "actions": "Actions",
+            "section-count": "Sections",
+            "create-banner": "Create Banner",
+            "autocomplete-type-to-search": "Please enter {count} or more characters"
+        },
+        "form": {
+            "name": "Name",
+            "enabled": "Enabled",
+            "title": "Title",
+            "description": "Description",
+            "cta": "Call to Action",
+            "external-link": "External Link"
+        },
+        "section": {
+            "title": "Title",
+            "description": "Description",
+            "cta": "Call to Action",
+            "add": "Add Section",
+            "edit": "Edit Section",
+            "select-collection": "Select collection",
+            "select-product": "Select product",
+            "add-cover": "Add cover image",
+            "delete": "Delete Section",
+            "delete-confirmation": "Are you sure you want to delete this section?",
+            "delete-error": "An error occurred while deleting the section.",
+            "asset-required": "An cover image is required for the section.",
+            "search-collection-by-name": "Search collection by name",
+            "select-cover-meta-text": "Cover image is used as a background image for the section. It is required for the section. Use landscape images for better results.",
+            "exclusive-product-collection": "Only one option can be chosen: collection, product or external link.",
+            "external-link-tooltip": "Use it when you want to link to an external page. Must start with https://"
+        },
+        "delete-confirmation": "Are you sure you want to delete this banner?",
+        "delete-error": "An error occurred while deleting the banner."
+    }
+}

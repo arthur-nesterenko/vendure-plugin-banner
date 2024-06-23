@@ -1,0 +1,92 @@
+.banner-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .invalid {
+        border-color: red;
+    }
+}
+
+.divider {
+    margin: 10px 0;
+    height: 2px;
+    background-color: #e0e0e0;
+    border: none;
+}
+
+.column {
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+}
+
+.asset-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &__detail {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+
+        @media (min-width: 768px) {
+            display: grid;
+            justify-content: space-between;
+            grid-template-columns: 200px 1fr;
+        }
+    }
+
+    &__preview {
+        width: 300px;
+        height: 300px;
+    }
+}
+
+.product-info {
+    margin: 10px 0;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    &__detail {
+        display: flex;
+    }
+
+    &__preview {
+        width: 300px;
+        height: 300px;
+    }
+
+    &__text {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        align-items: flex-start;
+    }
+}
+
+.error {
+    color: red;
+}
+
+::ng-deep .input-row {
+    display: block !important;
+}
+
+.autocomplete-select {
+    &__item {
+        display: grid;
+        grid-template-columns: 64px 1fr;
+
+        &__image {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+        }
+    }
+}
