@@ -41,11 +41,11 @@
         "@types/eslint__js": "^8.42.3",
         "@types/gulp": "^4.0.17",
         "@types/jest": "29.5.12",
-        "@vendure/admin-ui-plugin": "2.2.5",
-        "@vendure/asset-server-plugin": "2.2.5",
-        "@vendure/core": "^2.2.5",
-        "@vendure/testing": "2.2.5",
-        "@vendure/ui-devkit": "^2.2.5",
+        "@vendure/admin-ui-plugin": "2.2.6",
+        "@vendure/asset-server-plugin": "2.2.6",
+        "@vendure/core": "^2.2.6",
+        "@vendure/testing": "2.2.6",
+        "@vendure/ui-devkit": "^2.2.6",
         "better-sqlite3": "^11.0.0",
         "commitizen": "^4.3.0",
         "concurrently": "^8.2.2",
@@ -59,11 +59,11 @@
         "inquirer": "9",
         "jest": "29.7.0",
         "rimraf": "^5.0.7",
-        "ts-jest": "29.1.4",
+        "ts-jest": "29.1.5",
         "ts-node": "10.9.2",
         "ts-node-dev": "^2.0.0",
-        "typescript": "^5.4.5",
-        "typescript-eslint": "^7.13.0"
+       "typescript": "5.3.3",
+        "typescript-eslint": "^7.13.1"
     },
     "dependencies": {
         "sharp": "^0.33.4"
