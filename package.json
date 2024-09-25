@@ -40,15 +40,15 @@
         "@graphql-codegen/typescript-operations": "^4.2.1",
         "@types/eslint__js": "^8.42.3",
         "@types/gulp": "^4.0.17",
-        "@types/jest": "29.5.12",
-        "@vendure/admin-ui-plugin": "2.2.6",
-        "@vendure/asset-server-plugin": "2.2.6",
-        "@vendure/core": "^2.2.6",
-        "@vendure/testing": "2.2.6",
-        "@vendure/ui-devkit": "^2.2.6",
+        "@types/jest": "29.5.13",
+        "@vendure/admin-ui-plugin": "3.0.3",
+        "@vendure/asset-server-plugin": "3.0.3",
+        "@vendure/core": "^3.0.3",
+        "@vendure/testing": "3.0.3",
+        "@vendure/ui-devkit": "^3.0.3",
         "better-sqlite3": "^11.0.0",
         "commitizen": "^4.3.0",
-        "concurrently": "^8.2.2",
+        "concurrently": "^9.0.1",
         "eslint": "^9.5.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-import": "^2.29.1",
@@ -58,14 +58,14 @@
         "husky": "^9.0.11",
         "inquirer": "9",
         "jest": "29.7.0",
-        "rimraf": "^5.0.7",
-        "ts-jest": "29.1.5",
+        "rimraf": "^6.0.1",
+        "ts-jest": "29.2.5",
         "ts-node": "10.9.2",
         "ts-node-dev": "^2.0.0",
-       "typescript": "5.3.3",
-        "typescript-eslint": "^7.13.1"
+        "typescript": "5.3.3",
+        "typescript-eslint": "^8.7.0"
     },
     "dependencies": {
-        "sharp": "^0.33.4"
+        "sharp": "^0.33.5"
     }
 }
