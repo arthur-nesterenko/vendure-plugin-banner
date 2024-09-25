@@ -9,6 +9,18 @@ import { BannerSectionTranslation } from './entities/banner-section-translation.
 import { BannerPermission } from './banner-permissions';
 import { AdminUiExtension } from '@vendure/ui-devkit/compiler';
 import * as path from 'path';
+import fs from 'fs';
+
+const translationsDir = path.join(__dirname, 'translations');
+const availableLanguages = fs
+    .readdirSync(translationsDir)
+    .filter(file => file.endsWith('.json'))
+    .map(file => path.basename(file, '.json'));
+
+const translations: Record<string, string> = {};
+availableLanguages.forEach(lang => {
+    translations[lang] = path.join(translationsDir, `${lang}.json`);
+});
 
 @VendurePlugin({
     imports: [PluginCommonModule],
@@ -26,13 +38,11 @@ import * as path from 'path';
         config.authOptions.customPermissions.push(BannerPermission);
         return config;
     },
-    compatibility: '^2.0.0',
+    compatibility: '^3.0.0',
 })
 export class BannerPlugin {
     static ui: AdminUiExtension = {
-        translations: {
-            en: path.join(__dirname, 'translations/en.json'),
-        },
+        translations,
         extensionPath: path.join(__dirname, 'ui'),
         ngModules: [
             {
