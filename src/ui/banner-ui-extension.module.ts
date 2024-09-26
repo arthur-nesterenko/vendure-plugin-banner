@@ -1,24 +1,17 @@
 import { NgModule } from '@angular/core';
-import { SharedModule, addNavMenuSection } from '@vendure/admin-ui/core';
+import { SharedModule, addNavMenuSection, addNavMenuItem } from '@vendure/admin-ui/core';
 import { Permission } from './generated/ui';
 
 @NgModule({
     imports: [SharedModule],
     providers: [
-        addNavMenuSection(
+        addNavMenuItem(
             {
-                id: 'Banner',
-                label: 'Banner',
+                id: 'banners',
+                label: 'banner-plugin.menu.label',
                 requiresPermission: Permission.ReadBanner,
-                items: [
-                    {
-                        id: 'Banner',
-                        label: 'Banner',
-                        routerLink: ['/extensions/banner'],
-                        icon: 'picture',
-                        requiresPermission: Permission.ReadBanner,
-                    },
-                ],
+                routerLink: ['/extensions/banner'],
+                icon: 'picture',
             },
             'marketing',
         ),

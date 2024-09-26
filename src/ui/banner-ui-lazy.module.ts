@@ -13,11 +13,11 @@ export function bannerDetailBreadcrumb(resolved: { entity: Observable<Banner> })
     return resolved.entity.pipe(
         map(entity => [
             {
-                label: 'Banner',
+                label: 'banner-plugin.menu.label',
                 link: ['/extensions', 'banner'],
             },
             {
-                label: `${entity.name}`,
+                label: 'banner-plugin.menu.label',
                 link: [],
             },
         ]),
@@ -31,7 +31,7 @@ export function bannerDetailBreadcrumb(resolved: { entity: Observable<Banner> })
                 path: '',
                 pathMatch: 'full',
                 component: BannerListComponent,
-                data: { breadcrumb: 'Banner' },
+                data: { breadcrumb: 'banner-plugin.menu.breadcrumb' },
             },
 
             {
