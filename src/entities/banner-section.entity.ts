@@ -27,6 +27,8 @@ export class BannerSection extends VendureEntity implements Translatable {
     @OneToMany(() => BannerSectionTranslation, translation => translation.base, { cascade: true })
     translations: Array<Translation<BannerSection>>;
 
-    @ManyToOne(() => Banner, banner => banner.sections)
+    @ManyToOne(() => Banner, banner => banner.sections, {
+        onDelete: 'CASCADE',
+    })
     banner: Banner;
 }
