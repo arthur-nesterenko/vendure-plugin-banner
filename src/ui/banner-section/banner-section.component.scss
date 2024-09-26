@@ -33,12 +33,6 @@
         flex-direction: column;
         gap: 10px;
         align-items: flex-start;
-
-        @media (min-width: 768px) {
-            display: grid;
-            justify-content: space-between;
-            grid-template-columns: 200px 1fr;
-        }
     }
 
     &__preview {

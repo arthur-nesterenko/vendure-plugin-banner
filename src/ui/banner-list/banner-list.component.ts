@@ -127,8 +127,8 @@ export class BannerListComponent
                         : EMPTY,
                 ),
             )
-            .subscribe(
-                response => {
+            .subscribe({
+                next: response => {
                     if (response.deleteBanner) {
                         this.notificationService.success(_('common.notify-delete-success'), {
                             entity: 'Banner',
@@ -138,11 +138,11 @@ export class BannerListComponent
                         this.notificationService.error('banner-plugin.delete-error');
                     }
                 },
-                () => {
+                error: () => {
                     this.notificationService.error(_('common.notify-delete-error'), {
-                        entity: 'Page',
+                        entity: 'Banner',
                     });
                 },
-            );
+            });
     }
 }

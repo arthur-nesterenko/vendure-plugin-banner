@@ -150,4 +150,8 @@ export class BannerSectionComponent implements OnInit {
     productTrackByFn(item: SearchItem) {
         return item.productId;
     }
+
+    get coverButtonText(): string {
+        return this.selectedAsset ? 'banner-plugin.section.edit-cover' : 'banner-plugin.section.add-cover';
+    }
 }

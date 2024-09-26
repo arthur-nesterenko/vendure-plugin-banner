@@ -6,8 +6,13 @@
         <div class="asset-info__detail">
             <div class="column">
                 <button class="button primary" type="button" (click)="selectAssets()">
-                    <clr-icon shape="plus"></clr-icon>
-                    {{ 'banner-plugin.section.add-cover' | translate }}
+                    <ng-container *ngIf="selectedAsset; else addIcon">
+                        <clr-icon shape="pencil"></clr-icon>
+                    </ng-container>
+                    <ng-template #addIcon>
+                        <clr-icon shape="plus"></clr-icon>
+                    </ng-template>
+                    {{ coverButtonText | translate }}
                 </button>
                 <small>
                     {{ 'banner-plugin.section.select-cover-meta-text' | translate }}
@@ -32,10 +37,9 @@
             [items]="productsResult$ | async"
             [loading]="productsLoading"
             [typeahead]="productsInput$"
-            [typeToSearchText]="'banner-plugin.common.autocomplete-type-to-search' | translate: { count: 2 }"
+            [typeToSearchText]="'banner-plugin.common.autocomplete-type-to-search' | translate : { count: 2 }"
             [trackByFn]="productTrackByFn"
             [minTermLength]="2"
-            autofocus
             bindValue="productId"
             bindLabel="productName"
             formControlName="productId"
@@ -64,11 +68,10 @@
             [items]="collectionsResult$ | async"
             [loading]="collectionsLoading"
             [typeahead]="collectionsInput$"
-            [typeToSearchText]="'banner-plugin.common.autocomplete-type-to-search' | translate: { count: 2 }"
+            [typeToSearchText]="'banner-plugin.common.autocomplete-type-to-search' | translate : { count: 2 }"
             [trackByFn]="collectionTrackByFn"
             bindLabel="name"
             [minTermLength]="2"
-            autofocus
             bindValue="id"
             class="autocomplete-select"
             formControlName="collectionId"
@@ -98,7 +101,7 @@
     <hr class="divider" />
 
     <vdr-form-field [label]="'banner-plugin.section.title' | translate">
-        <input type="text" formControlName="title" />
+        <input type="text" formControlName="title" autofocus />
     </vdr-form-field>
     <vdr-form-field [label]="'banner-plugin.section.description' | translate">
         <textarea rows="5" formControlName="description"></textarea>

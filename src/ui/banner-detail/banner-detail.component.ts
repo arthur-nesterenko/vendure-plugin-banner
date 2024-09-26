@@ -5,7 +5,8 @@ import {
     ServerConfigService,
     createUpdatedTranslatable,
     ModalService,
-    PermissionsService
+    PermissionsService,
+    findTranslation,
 } from '@vendure/admin-ui/core';
 import { omit } from '@vendure/common/lib/omit';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
@@ -63,18 +64,14 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
         private modalService: ModalService,
         private changeDetector: ChangeDetectorRef,
         private notificationService: NotificationService,
-         
     ) {
-        super(route, router, serverConfigService, dataService,permissionsService);
+        super(route, router, serverConfigService, dataService, permissionsService);
         this.detailForm = this.formBuilder.group({
             enabled: [true],
             name: ['', Validators.required],
             sections: this.formBuilder.array([]),
         });
     }
-
-
-
 
     ngOnInit(): void {
         this.init();
@@ -106,23 +103,26 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
     }
 
     private getTranslatedSections(entity: BannerFragment, languageCode: LanguageCode) {
-        return (
-            entity.sections?.map(section => {
-                const { translations, asset, product, collection, ...info } = section;
-                const translatedData = translations?.find(t => t.languageCode === languageCode) ?? {};
+        const sections = entity.sections ?? [];
 
-                // @ts-ignore
-                const translationId = translatedData.id! ?? null;
-                return {
-                    ...translatedData,
-                    translationId,
-                    ...info,
-                    assetId: asset?.id ?? null,
-                    productId: product?.id ?? null,
-                    collectionId: collection?.id ?? null,
-                };
-            }) ?? []
-        );
+        return sections.map(section => {
+            const { translations, asset, product, collection } = section;
+            const translation = findTranslation(section, languageCode) ?? {
+                title: '',
+                description: '',
+                callToAction: '',
+                languageCode,
+            };
+
+            return {
+                sectionId: section.id,
+                ...translation,
+                externalLink: section?.externalLink ?? null,
+                assetId: asset?.id ?? null,
+                productId: product?.id ?? null,
+                collectionId: collection?.id ?? null,
+            };
+        });
     }
 
     addSection(input?: any) {
@@ -136,6 +136,7 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
                 assetId: [input?.assetId ?? null, Validators.required],
                 externalLink: [input?.externalLink ?? '', Validators.pattern(/^https:\/\/[^ "]+$/)],
                 id: [input?.id ?? null],
+                sectionId: [input?.sectionId ?? null],
             },
             { validator: exclusiveProductCollection },
         );
@@ -172,7 +173,7 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
                             }),
                         };
 
-                        return omit(translatedSection, ['title', 'description', 'callToAction']);
+                        return omit(translatedSection, ['title', 'description', 'callToAction', 'sectionId']);
                     });
 
                     return this.dataService.mutate<CreateBannerMutation, { input: CreateBannerInput }>(
@@ -189,13 +190,17 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
             )
 
             .subscribe({
-                next: () => {
+                next: res => {
                     this.detailForm.markAsPristine();
                     this.changeDetector.markForCheck();
                     this.notificationService.success('common.notify-create-success', {
                         entity: 'Banner',
                     });
-                    this.router.navigate(['../'], { relativeTo: this.route });
+
+                    this.router.navigate(['../', res.createBanner.id], {
+                        relativeTo: this.route,
+                    });
+                    // this.router.navigate(['../'], { relativeTo: this.route });
                 },
                 error: () => {
                     this.notificationService.error('common.notify-create-error', {
@@ -212,6 +217,12 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
                 mergeMap(([languageCode, banner]) => {
                     const formValue = this.detailForm.value;
                     const sections = formValue.sections.map((section: any) => {
+                        const sectionEntity = this.bannerSections.find(
+                            s => s.id === section.sectionId,
+                        ) as BannerSectionFragment;
+
+                        section.translations = sectionEntity.translations;
+
                         const translatedSection = {
                             ...createUpdatedTranslatable({
                                 translatable: section,
@@ -226,7 +237,7 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
                             }),
                         };
 
-                        return omit(translatedSection, ['title', 'description', 'callToAction']);
+                        return omit(translatedSection, ['title', 'description', 'callToAction', 'sectionId']);
                     });
 
                     return this.dataService.mutate<UpdateBannerMutation, UpdateBannerMutationVariables>(
@@ -276,10 +287,10 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
 
     private destroySectionMutation(section: BannerSectionFragment) {
         this.dataService
-            .mutate<
-                DeleteBannerSectionMutation,
-                DeleteBannerSectionMutationVariables
-            >(DELETE_BANNER_SECTION, { input: { id: section.id } })
+            .mutate<DeleteBannerSectionMutation, DeleteBannerSectionMutationVariables>(
+                DELETE_BANNER_SECTION,
+                { input: { id: section.id } },
+            )
             .subscribe({
                 next: () => {
                     this.notificationService.success('common.notify-delete-success');
