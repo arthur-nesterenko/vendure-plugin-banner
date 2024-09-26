@@ -1,5 +1,10 @@
 {
     "banner-plugin": {
+        "menu": {
+            "label": "Banners",
+            "breadcrumb": "Banners",
+            "item": "Banner"
+        },
         "common": {
             "actions": "Actions",
             "section-count": "Sections",
@@ -23,6 +28,7 @@
             "select-collection": "Select collection",
             "select-product": "Select product",
             "add-cover": "Add cover image",
+            "edit-cover": "Edit cover image",
             "delete": "Delete Section",
             "delete-confirmation": "Are you sure you want to delete this section?",
             "delete-error": "An error occurred while deleting the section.",
