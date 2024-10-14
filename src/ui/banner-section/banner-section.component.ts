@@ -35,6 +35,7 @@ export class BannerSectionComponent implements OnInit {
     productsResult$: Observable<SearchItem[]>;
     productsLoading = false;
     productsInput$ = new Subject<string>();
+    @Input() isExpanded = true;
 
     constructor(
         private dataService: DataService,
@@ -50,6 +51,8 @@ export class BannerSectionComponent implements OnInit {
             if (this.bannerSection.asset) {
                 this.selectedAsset = this.bannerSection.asset as Asset;
             }
+        } else {
+            this.isExpanded = true;
         }
     }
 
@@ -153,5 +156,13 @@ export class BannerSectionComponent implements OnInit {
 
     get coverButtonText(): string {
         return this.selectedAsset ? 'banner-plugin.section.edit-cover' : 'banner-plugin.section.add-cover';
+    }
+
+    get hideSection() {
+        return typeof this.bannerSection === 'undefined';
+    }
+
+    toggleSection() {
+        this.isExpanded = !this.isExpanded;
     }
 }

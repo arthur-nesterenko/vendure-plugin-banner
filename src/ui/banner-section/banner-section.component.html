@@ -1,113 +1,151 @@
 <div [formGroup]="section" class="banner-section">
-    <div *ngIf="section.errors?.exclusiveProductCollection" class="error">
-        {{ 'banner-plugin.section.exclusive-product-collection' | translate }}
-    </div>
-    <div class="asset-info">
-        <div class="asset-info__detail">
-            <div class="column">
-                <button class="button primary" type="button" (click)="selectAssets()">
-                    <ng-container *ngIf="selectedAsset; else addIcon">
-                        <clr-icon shape="pencil"></clr-icon>
-                    </ng-container>
-                    <ng-template #addIcon>
-                        <clr-icon shape="plus"></clr-icon>
-                    </ng-template>
-                    {{ coverButtonText | translate }}
-                </button>
-                <small>
-                    {{ 'banner-plugin.section.select-cover-meta-text' | translate }}
-                </small>
+    <div
+        class="banner-section__header"
+        role="button"
+        [ngClass]="{
+            hidden: hideSection,
+        }"
+        (click)="toggleSection()"
+        [attr.aria-expanded]="isExpanded"
+    >
+        <section class="banner-section__header-mini">
+            <div *ngIf="!isExpanded">
+                <div class="banner-section__header-mini-content">
+                    <img
+                        class="banner-section__header-mini__preview"
+                        *ngIf="selectedAsset"
+                        [src]="selectedAsset?.preview + '?preset=medium'"
+                        [alt]="selectedAsset?.name"
+                    />
+                    <div class="banner-section__header-mini-desc">
+                        <h1>{{ section.value.title }}</h1>
+                        <h2>{{ section.value.callToAction }}</h2>
+                    </div>
+                </div>
             </div>
-
-            <img
-                class="asset-info__preview"
-                *ngIf="selectedAsset"
-                [src]="selectedAsset?.preview + '?preset=medium'"
-                [alt]="selectedAsset?.name"
-            />
-        </div>
-        <div *ngIf="section.get('assetId')?.invalid && section.get('assetId')?.touched" class="error">
-            {{ 'banner-plugin.section.asset-required' | translate }}
+        </section>
+        <div>
+            <clr-icon [attr.shape]="isExpanded ? 'minus' : 'angle'"></clr-icon>
         </div>
     </div>
-
-    <vdr-form-field class="autocomplete-field" [label]="'banner-plugin.section.select-product' | translate">
-        <ng-select
-            class="autocomplete-select"
-            [items]="productsResult$ | async"
-            [loading]="productsLoading"
-            [typeahead]="productsInput$"
-            [typeToSearchText]="'banner-plugin.common.autocomplete-type-to-search' | translate : { count: 2 }"
-            [trackByFn]="productTrackByFn"
-            [minTermLength]="2"
-            bindValue="productId"
-            bindLabel="productName"
-            formControlName="productId"
-        >
-            <ng-template ng-option-tmp let-item="item">
-                <div class="autocomplete-select__item">
-                    <img
-                        class="autocomplete-select__item__image"
-                        *ngIf="item.productAsset"
-                        [src]="item.productAsset.preview"
-                    />
-                    <span>
-                        {{ item.productName }}
-                    </span>
+    <div *ngIf="isExpanded" class="banner-section__content">
+        <div *ngIf="section.errors?.exclusiveProductCollection" class="error">
+            {{ 'banner-plugin.section.exclusive-product-collection' | translate }}
+        </div>
+        <div class="asset-info">
+            <div class="asset-info__detail">
+                <div class="column">
+                    <button class="button primary" type="button" (click)="selectAssets()">
+                        <ng-container *ngIf="selectedAsset; else addIcon">
+                            <clr-icon shape="pencil"></clr-icon>
+                        </ng-container>
+                        <ng-template #addIcon>
+                            <clr-icon shape="plus"></clr-icon>
+                        </ng-template>
+                        {{ coverButtonText | translate }}
+                    </button>
+                    <small>
+                        {{ 'banner-plugin.section.select-cover-meta-text' | translate }}
+                    </small>
                 </div>
-            </ng-template>
-        </ng-select>
-    </vdr-form-field>
 
-    <vdr-form-field
-        class="autocomplete-field"
-        style="display: block"
-        [label]="'banner-plugin.section.select-collection' | translate"
-    >
-        <ng-select
-            [items]="collectionsResult$ | async"
-            [loading]="collectionsLoading"
-            [typeahead]="collectionsInput$"
-            [typeToSearchText]="'banner-plugin.common.autocomplete-type-to-search' | translate : { count: 2 }"
-            [trackByFn]="collectionTrackByFn"
-            bindLabel="name"
-            [minTermLength]="2"
-            bindValue="id"
-            class="autocomplete-select"
-            formControlName="collectionId"
+                <img
+                    class="asset-info__preview"
+                    *ngIf="selectedAsset"
+                    [src]="selectedAsset?.preview + '?preset=medium'"
+                    [alt]="selectedAsset?.name"
+                />
+            </div>
+            <div *ngIf="section.get('assetId')?.invalid && section.get('assetId')?.touched" class="error">
+                {{ 'banner-plugin.section.asset-required' | translate }}
+            </div>
+        </div>
+
+        <vdr-form-field
+            class="autocomplete-field"
+            [label]="'banner-plugin.section.select-product' | translate"
         >
-            <ng-template ng-option-tmp let-item="item">
-                <div class="autocomplete-select__item">
-                    <img
-                        class="autocomplete-select__item__image"
-                        *ngIf="item.featuredAsset"
-                        [src]="item.featuredAsset.preview"
-                    />
-                    <span>
-                        {{ item.name }}
-                    </span>
-                </div>
-            </ng-template>
-        </ng-select>
-    </vdr-form-field>
+            <ng-select
+                class="autocomplete-select"
+                [items]="productsResult$ | async"
+                [loading]="productsLoading"
+                [typeahead]="productsInput$"
+                [typeToSearchText]="
+                    'banner-plugin.common.autocomplete-type-to-search' | translate: { count: 2 }
+                "
+                [trackByFn]="productTrackByFn"
+                [minTermLength]="2"
+                bindValue="productId"
+                bindLabel="productName"
+                formControlName="productId"
+            >
+                <ng-template ng-option-tmp let-item="item">
+                    <div class="autocomplete-select__item">
+                        <img
+                            class="autocomplete-select__item__image"
+                            *ngIf="item.productAsset"
+                            [src]="item.productAsset.preview"
+                        />
+                        <span>
+                            {{ item.productName }}
+                        </span>
+                    </div>
+                </ng-template>
+            </ng-select>
+        </vdr-form-field>
 
-    <vdr-form-field
-        [label]="'banner-plugin.form.external-link' | translate"
-        [tooltip]="'banner-plugin.section.external-link-tooltip' | translate"
-    >
-        <input type="url" formControlName="externalLink" />
-    </vdr-form-field>
+        <vdr-form-field
+            class="autocomplete-field"
+            style="display: block"
+            [label]="'banner-plugin.section.select-collection' | translate"
+        >
+            <ng-select
+                [items]="collectionsResult$ | async"
+                [loading]="collectionsLoading"
+                [typeahead]="collectionsInput$"
+                [typeToSearchText]="
+                    'banner-plugin.common.autocomplete-type-to-search' | translate: { count: 2 }
+                "
+                [trackByFn]="collectionTrackByFn"
+                bindLabel="name"
+                [minTermLength]="2"
+                bindValue="id"
+                class="autocomplete-select"
+                formControlName="collectionId"
+            >
+                <ng-template ng-option-tmp let-item="item">
+                    <div class="autocomplete-select__item">
+                        <img
+                            class="autocomplete-select__item__image"
+                            *ngIf="item.featuredAsset"
+                            [src]="item.featuredAsset.preview"
+                        />
+                        <span>
+                            {{ item.name }}
+                        </span>
+                    </div>
+                </ng-template>
+            </ng-select>
+        </vdr-form-field>
 
-    <hr class="divider" />
+        <vdr-form-field
+            [label]="'banner-plugin.form.external-link' | translate"
+            [tooltip]="'banner-plugin.section.external-link-tooltip' | translate"
+        >
+            <input type="url" formControlName="externalLink" />
+        </vdr-form-field>
 
-    <vdr-form-field [label]="'banner-plugin.section.title' | translate">
-        <input type="text" formControlName="title" autofocus />
-    </vdr-form-field>
-    <vdr-form-field [label]="'banner-plugin.section.description' | translate">
-        <textarea rows="5" formControlName="description"></textarea>
-    </vdr-form-field>
+        <hr class="divider" />
 
-    <vdr-form-field [label]="'banner-plugin.section.cta' | translate">
-        <input type="text" formControlName="callToAction" />
-    </vdr-form-field>
+        <vdr-form-field [label]="'banner-plugin.section.title' | translate">
+            <input type="text" formControlName="title" autofocus />
+        </vdr-form-field>
+        <vdr-form-field [label]="'banner-plugin.section.description' | translate">
+            <textarea rows="5" formControlName="description"></textarea>
+        </vdr-form-field>
+
+        <vdr-form-field [label]="'banner-plugin.section.cta' | translate">
+            <input type="text" formControlName="callToAction" />
+        </vdr-form-field>
+    </div>
 </div>

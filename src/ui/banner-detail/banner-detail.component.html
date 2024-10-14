@@ -48,6 +48,7 @@
             <ng-container *ngFor="let section of sections.controls; let i = index">
                 <vdr-card [formGroup]="detailForm">
                     <banner-section
+                        [isExpanded]="expandSections"
                         [bannerSection]="bannerSections?.[i]"
                         [section]="section"
                     ></banner-section>

@@ -6,6 +6,74 @@
     .invalid {
         border-color: red;
     }
+
+    .hidden {
+        display: none;
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        transition: all 0.3s;
+
+        &:hover {
+            cursor: pointer;
+            background-color: #e0e0e0;
+        }
+
+        &-invlid {
+            display: none;
+        }
+
+        &[aria-disabled="true"] {
+            cursor: default;
+            pointer-events: none;
+        }
+
+        &-mini {
+            &__preview {
+                width: 100px;
+                height: 100%;
+                object-fit: contain;
+            }
+
+            &-content {
+                display: flex;
+                flex-direction: row;
+                gap: 5px;
+                align-items: flex-start;
+            }
+            &-desc {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                align-items: flex-start;
+
+                h1,
+                h2 {
+                    margin: 0;
+                    padding: 0;
+                }
+
+                h1 {
+                    font-size: 0.8rem;
+                }
+                h2 {
+                    font-size: 0.6rem;
+                }
+            }
+        }
+    }
+
+    &__toggle-button {
+        outline: none;
+        border: none;
+
+        &:hover {
+            cursor: pointer;
+            background-color: #e0e0e0;
+        }
+    }
 }
 
 .divider {
