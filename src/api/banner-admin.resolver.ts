@@ -23,8 +23,9 @@ export class BannerAdminResolver {
     async banners(
         @Ctx() ctx: RequestContext,
         @Args() args: QueryBannersArgs,
+        @Relations(Banner) relations: RelationPaths<Banner>,
     ): Promise<PaginatedList<Banner>> {
-        return this.bannerService.findAll(ctx, args.options);
+        return this.bannerService.findAll(ctx, args.options, relations);
     }
 
     @Query()
@@ -40,8 +41,12 @@ export class BannerAdminResolver {
     @Transaction()
     @Mutation()
     @Allow(BannerPermission.Update)
-    async updateBanner(@Ctx() ctx: RequestContext, @Args() args: UpdateBannerMutationVariables) {
-        return this.bannerService.update(ctx, args.input);
+    async updateBanner(
+        @Ctx() ctx: RequestContext,
+        @Args() args: UpdateBannerMutationVariables,
+        @Relations(Banner) relations: RelationPaths<Banner>,
+    ) {
+        return this.bannerService.update(ctx, args.input, relations);
     }
 
     @Transaction()

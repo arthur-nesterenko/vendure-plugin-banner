@@ -35,7 +35,9 @@ export class BannerService {
         name: string,
         relations?: RelationPaths<Banner>,
     ): Promise<Banner | null> {
-        const banner = await this.connection.getRepository(ctx, Banner).findOne({ where: { name } });
+        const banner = await this.connection
+            .getRepository(ctx, Banner)
+            .findOne({ where: { name, enabled: true } });
 
         if (!banner) {
             throw new EntityNotFoundError('Banner', name);
@@ -47,10 +49,14 @@ export class BannerService {
         return assertFound(this.findOne(ctx, banner?.id, rlts));
     }
 
-    async findAll(ctx: RequestContext, options?: any): Promise<PaginatedList<Banner>> {
+    async findAll(
+        ctx: RequestContext,
+        options?: any,
+        relations?: RelationPaths<Banner>,
+    ): Promise<PaginatedList<Banner>> {
         const qb = this.listQueryBuilder.build<Banner>(Banner, options || undefined, {
             ctx,
-            relations: ['sections', 'sections.translations'],
+            relations: ['sections', 'sections.translations'].concat(relations || []),
         });
 
         const [banners, totalItems] = await qb.getManyAndCount();
@@ -67,6 +73,7 @@ export class BannerService {
     async findOne(ctx: RequestContext, id: ID, relations?: RelationPaths<Banner>): Promise<Banner | null> {
         const banner = await this.connection.getEntityOrThrow(ctx, Banner, id, {
             relations,
+            where: { enabled: true },
         });
 
         const sections = banner?.sections?.map(section => {
@@ -94,9 +101,8 @@ export class BannerService {
         return assertFound(result as any);
     }
 
-    async update(ctx: RequestContext, input: UpdateBannerInput) {
+    async update(ctx: RequestContext, input: UpdateBannerInput, relations?: RelationPaths<Banner>) {
         const { sections = [], ...banner } = input;
-
         const sectionToSave = await Promise.all(sections.map(section => this.upsertSection(ctx, section)));
 
         await this.connection.getRepository(ctx, Banner).save({
@@ -104,7 +110,8 @@ export class BannerService {
             sections: sectionToSave,
         });
 
-        return assertFound(this.findOne(ctx, input.id, ['sections', 'sections.translations'] as any));
+        const updatedBanner = this.findOne(ctx, input.id, relations);
+        return assertFound(updatedBanner);
     }
 
     async delete(ctx: RequestContext, id: ID) {
@@ -116,7 +123,7 @@ export class BannerService {
     }
 
     private upsertSection = async (ctx: RequestContext, input: BannerSectionInput) => {
-        if (input.id) {
+        if (!input.id) {
             return this.createSection(ctx, input);
         }
 
@@ -176,9 +183,7 @@ export class BannerService {
                 translations.push(translation);
             }
         }
-
         section.translations = translations;
-
         return section;
     };
 
