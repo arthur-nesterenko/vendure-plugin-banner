@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { SharedModule, addNavMenuSection, addNavMenuItem } from '@vendure/admin-ui/core';
+import { SharedModule, addNavMenuItem } from '@vendure/admin-ui/core';
 import { Permission } from './generated/ui';
 
 @NgModule({

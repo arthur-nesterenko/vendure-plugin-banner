@@ -11,7 +11,7 @@ import { BannerDetailResolver } from './banner-detail/banner-detail.resolver';
 
 export function bannerDetailBreadcrumb(resolved: { entity: Observable<Banner> }) {
     return resolved.entity.pipe(
-        map(entity => [
+        map(() => [
             {
                 label: 'banner-plugin.menu.label',
                 link: ['/extensions', 'banner'],
