@@ -171,6 +171,8 @@ export class BannerService {
             section.collection = collection;
         }
 
+        section.position = input?.position ?? 0;
+
         return section;
     };
 

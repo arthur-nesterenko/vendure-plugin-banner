@@ -86,9 +86,9 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
     }
 
     protected setFormValues(entity: BannerFragment, languageCode: LanguageCode): void {
-        const translatedSections = this.getTranslatedSections(entity, languageCode);
-
-        console.log('setFormValues', entity);
+        const translatedSections = this.getTranslatedSections(entity, languageCode).sort(
+            (a, b) => a.position - b.position,
+        );
 
         this.bannerSections = entity.sections ?? [];
 
@@ -111,7 +111,7 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
         const sections = entity.sections ?? [];
 
         return sections.map(section => {
-            const { asset, product, collection } = section;
+            const { asset, product, collection, position = 0 } = section;
             const translation = findTranslation(section, languageCode) ?? {
                 title: '',
                 description: '',
@@ -126,11 +126,13 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
                 assetId: asset?.id ?? null,
                 productId: product?.id ?? null,
                 collectionId: collection?.id ?? null,
+                position,
             };
         });
     }
 
     addSection(input?: any) {
+        const position = input?.position ?? this.sections.length;
         const sectionGroup = this.formBuilder.group(
             {
                 title: [input?.title ?? '', Validators.required],
@@ -142,9 +144,11 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
                 externalLink: [input?.externalLink ?? '', Validators.pattern(/^https:\/\/[^ "]+$/)],
                 id: [input?.id ?? null],
                 sectionId: [input?.sectionId ?? null],
+                position: [position, [Validators.required, Validators.min(0)]],
             },
             { validator: exclusiveProductCollection },
         );
+
         this.sections.push(sectionGroup);
     }
 

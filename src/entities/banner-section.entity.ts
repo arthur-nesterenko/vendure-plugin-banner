@@ -31,4 +31,7 @@ export class BannerSection extends VendureEntity implements Translatable {
         onDelete: 'CASCADE',
     })
     banner: Banner;
+
+    @Column({ type: 'int', default: 0 })
+    position: number;
 }

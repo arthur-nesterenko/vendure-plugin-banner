@@ -25,7 +25,7 @@
             display: none;
         }
 
-        &[aria-disabled="true"] {
+        &[aria-disabled='true'] {
             cursor: default;
             pointer-events: none;
         }

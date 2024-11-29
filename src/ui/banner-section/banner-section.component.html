@@ -20,6 +20,9 @@
                     <div class="banner-section__header-mini-desc">
                         <h1>{{ section.value.title }}</h1>
                         <h2>{{ section.value.callToAction }}</h2>
+                        <span>
+                            {{ 'banner-plugin.section.position' | translate }} {{ section.value.position }}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -31,6 +34,22 @@
     <div *ngIf="isExpanded" class="banner-section__content">
         <div *ngIf="section.errors?.exclusiveProductCollection" class="error">
             {{ 'banner-plugin.section.exclusive-product-collection' | translate }}
+        </div>
+        <div>
+            <vdr-form-field [label]="'banner-plugin.section.position' | translate">
+                <input type="number" formControlName="position" [min]="0" [max]="maxPosition" />
+                <ng-container *ngIf="section.get('position')?.invalid">
+                    <small class="error" *ngIf="section.get('position')?.hasError('required')">
+                        {{ 'banner-plugin.errors.positionRequired' | translate }}
+                    </small>
+                    <small class="error" *ngIf="section.get('position')?.hasError('min')">
+                        {{ 'banner-plugin.errors.positionMin' | translate: { min: 0 } }}
+                    </small>
+                    <small class="error" *ngIf="section.get('position')?.hasError('max')">
+                        {{ 'banner-plugin.errors.positionMax' | translate: { max: maxPosition } }}
+                    </small>
+                </ng-container>
+            </vdr-form-field>
         </div>
         <div class="asset-info">
             <div class="asset-info__detail">

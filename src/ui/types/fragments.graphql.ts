@@ -23,6 +23,7 @@ export const BANNER_SECTION_FRAGMENT = gql`
             title
             description
         }
+        position
     }
 `;
 

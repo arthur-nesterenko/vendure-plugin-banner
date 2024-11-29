@@ -31,6 +31,7 @@ export const commonApiExtensions = gql`
         product: Product
         collection: Collection
         asset: Asset
+        position: Int!
     }
 
     type BannerList implements PaginatedList {
@@ -66,6 +67,7 @@ export const adminApiExtensions = gql`
         assetId: ID
         externalLink: String
         translations: [BannerSectionTranslationInput!]
+        position: Int
     }
 
     input CreateBannerInput {

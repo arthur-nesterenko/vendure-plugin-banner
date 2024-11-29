@@ -36,9 +36,15 @@
             "search-collection-by-name": "Search collection by name",
             "select-cover-meta-text": "Cover image is used as a background image for the section. It is required for the section. Use landscape images for better results.",
             "exclusive-product-collection": "Only one option can be chosen: collection, product or external link.",
-            "external-link-tooltip": "Use it when you want to link to an external page. Must start with https://"
+            "external-link-tooltip": "Use it when you want to link to an external page. Must start with https://",
+            "position": "Position"
         },
         "delete-confirmation": "Are you sure you want to delete this banner?",
-        "delete-error": "An error occurred while deleting the banner."
+        "delete-error": "An error occurred while deleting the banner.",
+        "errors": {
+            "positionRequired": "Position is required.",
+            "positionMin": "Position must be at least {min}.",
+            "positionMax": "Position cannot exceed {max}."
+        }
     }
 }

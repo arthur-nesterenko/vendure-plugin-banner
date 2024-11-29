@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, Input, OnInit, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
+import { FormGroup, Validators } from '@angular/forms';
 import {
     ModalService,
     AssetPickerDialogComponent,
@@ -19,9 +19,10 @@ type CollectionItem = CollectionList['items'][number];
     templateUrl: './banner-section.component.html',
     styleUrls: ['./banner-section.component.scss'],
 })
-export class BannerSectionComponent implements OnInit {
+export class BannerSectionComponent implements OnInit, OnChanges {
     @Input() section: FormGroup;
     @Input() bannerSection: BannerSectionFragment;
+    @Input() maxPosition: number;
 
     selectedProduct: SearchItem;
     selectedAsset: Asset | null = null;
@@ -47,6 +48,7 @@ export class BannerSectionComponent implements OnInit {
         this.searchCollection();
         this.searchProducts();
 
+        this.setPositionValidation();
         if (this.bannerSection) {
             if (this.bannerSection.asset) {
                 this.selectedAsset = this.bannerSection.asset as Asset;
@@ -54,6 +56,21 @@ export class BannerSectionComponent implements OnInit {
         } else {
             this.isExpanded = true;
         }
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.maxPosition && !changes.maxPosition.firstChange) {
+            this.setPositionValidation();
+        }
+    }
+
+    setPositionValidation() {
+        const positionControl = this.section.get('position');
+        positionControl?.setValidators([
+            Validators.required,
+            Validators.min(0),
+            Validators.max(this.maxPosition),
+        ]);
     }
 
     searchCollection() {
