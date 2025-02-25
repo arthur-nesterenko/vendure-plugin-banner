@@ -133,7 +133,7 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
 
     addSection(input?: any) {
         const position = input?.position ?? this.sections.length;
-        const sectionGroup = this.formBuilder.group(
+        const sectionGroup = this.formBuilder.nonNullable.group(
             {
                 title: [input?.title ?? '', Validators.required],
                 description: [input?.description ?? ''],
@@ -146,7 +146,7 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
                 sectionId: [input?.sectionId ?? null],
                 position: [position, [Validators.required, Validators.min(0)]],
             },
-            { validator: exclusiveProductCollection },
+            { validators: exclusiveProductCollection },
         );
 
         this.sections.push(sectionGroup);
