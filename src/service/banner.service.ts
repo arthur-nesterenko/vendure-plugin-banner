@@ -64,7 +64,9 @@ export class BannerService {
         return {
             items: banners.map((banner: Banner) => ({
                 ...banner,
-                sections: banner.sections.map(section => this.translator.translate(section, ctx)),
+                sections: banner.sections
+                    .map(section => this.translator.translate(section, ctx))
+                    .sort((a, b) => a.position - b.position),
             })),
             totalItems,
         };
@@ -76,10 +78,12 @@ export class BannerService {
             where: { enabled: true },
         });
 
-        const sections = banner?.sections?.map(section => {
-            const translatedData = this.translator.translate(section, ctx);
-            return translatedData;
-        });
+        const sections = banner?.sections
+            ?.map(section => {
+                const translatedData = this.translator.translate(section, ctx);
+                return translatedData;
+            })
+            .sort((a, b) => a.position - b.position);
 
         return {
             ...banner,
