@@ -44,33 +44,51 @@
             </div>
         </vdr-card>
 
-        <ng-container formArrayName="sections">
-            <ng-container *ngFor="let section of sections.controls; let i = index">
-                <vdr-card [formGroup]="detailForm">
-                    <banner-section
-                        [maxPosition]="sections.controls.length"
-                        [isExpanded]="expandSections"
-                        [bannerSection]="bannerSections?.[i]"
-                        [section]="section"
-                    ></banner-section>
-                    <div class="add-section">
-                        <button
-                            *ngIf="bannerSections && bannerSections[i]?.id; else delete"
-                            class="button danger"
-                            (click)="destroySection(bannerSections?.[i])"
-                        >
-                            <clr-icon shape="trash"></clr-icon>
-                            {{ 'common.remove' | translate }}
-                        </button>
-                        <ng-template #delete>
-                            <button *ngIf="i > 0" class="btn btn-danger" (click)="deleteSection(i)">
-                                {{ 'common.remove' | translate }}
-                            </button>
-                        </ng-template>
+        <div cdkDropList (cdkDropListDropped)="onSectionDrop($event)" class="sections-container">
+            <ng-container formArrayName="sections">
+                <ng-container *ngFor="let section of sections.controls; let i = index">
+                    <div cdkDrag class="section-item">
+                        <vdr-card [formGroup]="detailForm" class="section-card">
+                            <div class="section-content">
+                                <div class="drag-handle" cdkDragHandle>
+                                    <clr-icon shape="drag-handle"></clr-icon>
+                                </div>
+                                <div class="section-body">
+                                    <banner-section
+                                        [maxPosition]="sections.controls.length"
+                                        [isExpanded]="expandSections"
+                                        [bannerSection]="bannerSections?.[i]"
+                                        [section]="section"
+                                    ></banner-section>
+                                    <div class="add-section">
+                                        <button
+                                            *ngIf="bannerSections && bannerSections[i]?.id; else delete"
+                                            class="button danger"
+                                            (click)="destroySection(bannerSections?.[i])"
+                                        >
+                                            <clr-icon shape="trash"></clr-icon>
+                                            {{ 'common.remove' | translate }}
+                                        </button>
+                                        <ng-template #delete>
+                                            <button
+                                                *ngIf="i > 0"
+                                                class="btn btn-danger"
+                                                (click)="deleteSection(i)"
+                                            >
+                                                {{ 'common.remove' | translate }}
+                                            </button>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </div>
+                        </vdr-card>
+                        <!-- Preview area when dragging -->
+                        <div class="custom-placeholder" *cdkDragPlaceholder></div>
                     </div>
-                </vdr-card>
+                </ng-container>
             </ng-container>
-        </ng-container>
+        </div>
+
         <vdr-card>
             <button class="button primary" type="button" (click)="addSection()">
                 <clr-icon shape="plus" dir="left"></clr-icon>

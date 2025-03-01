@@ -27,6 +27,7 @@ import { Observable, combineLatest } from 'rxjs';
 import { LanguageCode } from '@vendure/core';
 import { CREATE_BANNER, UPDATE_BANNER, DELETE_BANNER_SECTION } from './banner-detail.graphql';
 import { marker as _ } from '@biesbjerg/ngx-translate-extract-marker';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 function exclusiveProductCollection(control: any): ValidationErrors | null {
     const productId = control.get('productId').value;
@@ -126,13 +127,13 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
                 assetId: asset?.id ?? null,
                 productId: product?.id ?? null,
                 collectionId: collection?.id ?? null,
-                position,
+                position: position + 1,
             };
         });
     }
 
     addSection(input?: any) {
-        const position = input?.position ?? this.sections.length;
+        const position = input?.position ?? this.sections.length + 1;
         const sectionGroup = this.formBuilder.nonNullable.group(
             {
                 title: [input?.title ?? '', Validators.required],
@@ -144,7 +145,7 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
                 externalLink: [input?.externalLink ?? '', Validators.pattern(/^https:\/\/[^ "]+$/)],
                 id: [input?.id ?? null],
                 sectionId: [input?.sectionId ?? null],
-                position: [position, [Validators.required, Validators.min(0)]],
+                position: [position, [Validators.required, Validators.min(1)]],
             },
             { validators: exclusiveProductCollection },
         );
@@ -167,7 +168,7 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
                 mergeMap(([languageCode]) => {
                     const formValue = this.detailForm.value;
 
-                    const sections = formValue.sections.map((section: any) => {
+                    const sections = formValue.sections.map((section: any, index: number) => {
                         const translatedSection = {
                             ...createUpdatedTranslatable({
                                 translatable: section,
@@ -180,6 +181,7 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
                                     languageCode,
                                 },
                             }),
+                            position: section.position !== undefined ? section.position - 1 : index,
                         };
 
                         return omit(translatedSection, ['title', 'description', 'callToAction', 'sectionId']);
@@ -224,7 +226,7 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
                 take(1),
                 mergeMap(([languageCode, banner]) => {
                     const formValue = this.detailForm.value;
-                    const sections = formValue.sections.map((section: any) => {
+                    const sections = formValue.sections.map((section: any, index: number) => {
                         const sectionEntity = this.bannerSections.find(
                             s => s.id === section.sectionId,
                         ) as BannerSectionFragment;
@@ -245,6 +247,7 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
                                     languageCode,
                                 },
                             }),
+                            position: section.position !== undefined ? section.position - 1 : index,
                         };
 
                         return omit(translatedSection, ['title', 'description', 'callToAction', 'sectionId']);
@@ -319,5 +322,28 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> i
 
     get sections() {
         return this.detailForm.controls.sections as FormArray;
+    }
+
+    onSectionDrop(event: CdkDragDrop<any[]>) {
+        moveItemInArray(this.sections.controls, event.previousIndex, event.currentIndex);
+
+        if (this.bannerSections.length) {
+            const newBannerSections = [...this.bannerSections];
+            moveItemInArray(newBannerSections, event.previousIndex, event.currentIndex);
+            this.bannerSections = newBannerSections;
+        }
+
+        this.sections.controls.forEach((control, index) => {
+            control.get('position')?.setValue(index + 1);
+            if (this.bannerSections[index]) {
+                this.bannerSections[index] = {
+                    ...this.bannerSections[index],
+                    position: index + 1,
+                };
+            }
+        });
+
+        this.detailForm.markAsDirty();
+        this.changeDetector.markForCheck();
     }
 }

@@ -8,6 +8,7 @@ import { BannerListComponent } from './banner-list/banner-list.component';
 import { BannerDetailComponent } from './banner-detail/banner-detail.component';
 import { BannerSectionComponent } from './banner-section/banner-section.component';
 import { BannerDetailResolver } from './banner-detail/banner-detail.resolver';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 export function bannerDetailBreadcrumb(resolved: { entity: Observable<Banner> }) {
     return resolved.entity.pipe(
@@ -26,6 +27,7 @@ export function bannerDetailBreadcrumb(resolved: { entity: Observable<Banner> })
 @NgModule({
     imports: [
         SharedModule,
+        DragDropModule,
         RouterModule.forChild([
             {
                 path: '',
