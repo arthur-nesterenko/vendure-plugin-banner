@@ -8,9 +8,8 @@ import {
     DataService,
     NotificationService,
 } from '@vendure/admin-ui/core';
-import { BannerSectionFragment } from '../generated/ui';
+import { BannerSectionFragment, CollectionList } from '../generated-types';
 import { Subject, Observable, of, concat } from 'rxjs';
-import { CollectionList } from '../generated/ui';
 import { debounceTime, distinctUntilChanged, switchMap, tap, takeUntil, map } from 'rxjs/operators';
 import { gql } from '@apollo/client/core';
 

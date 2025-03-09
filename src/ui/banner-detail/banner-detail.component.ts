@@ -21,7 +21,7 @@ import {
     UpdateBannerMutationVariables,
     DeleteBannerSectionMutation,
     DeleteBannerSectionMutationVariables,
-} from '../generated/ui';
+} from './../generated-types';
 import { mergeMap, take } from 'rxjs/operators';
 import { Observable, combineLatest } from 'rxjs';
 import { LanguageCode } from '@vendure/core';

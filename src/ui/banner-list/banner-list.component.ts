@@ -14,15 +14,15 @@ import {
     BannerFilterParameter,
     Banner,
     DeleteBannerMutation,
-} from './../generated/ui';
+    DeleteBannerInput,
+    LogicalOperator,
+} from './../generated-types';
 import { GET_BANNERS, DELETE_BANNER } from './banner-list.graphql';
 import { marker as _ } from '@biesbjerg/ngx-translate-extract-marker';
-import { LogicalOperator } from './../generated/generated-shop-types';
 import { LanguageCode } from '@vendure/core';
 import { EMPTY, Observable, merge } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
 import { debounceTime, takeUntil, switchMap, tap } from 'rxjs/operators';
-import { DeleteBannerInput } from '../generated/generated-admin-types';
 
 export type BannerSearchForm = {
     name: string;

@@ -17,7 +17,7 @@ import { omit } from '@vendure/common/lib/omit';
 import { Banner } from '../entities/banner.entity';
 import { BannerSection } from '../entities/banner-section.entity';
 import { BannerSectionTranslation } from '../entities/banner-section-translation.entity';
-import { BannerSectionInput, CreateBannerInput, UpdateBannerInput } from '../ui/generated/ui';
+import { BannerSectionInput, CreateBannerInput, UpdateBannerInput } from '../generated-admin-types';
 
 import { TranslationDiffer } from '@vendure/core/dist/service/helpers/translatable-saver/translation-differ';
 import { patchEntity } from '@vendure/core/dist/service/helpers/utils/patch-entity';

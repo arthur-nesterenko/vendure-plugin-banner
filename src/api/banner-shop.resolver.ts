@@ -1,6 +1,6 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { Ctx, RelationPaths, Relations, RequestContext } from '@vendure/core';
-import { QueryBannerArgs } from '../ui/generated/ui';
+import { QueryBannerArgs } from '../generated-shop-types';
 import { Banner } from '../entities/banner.entity';
 import { BannerService } from '../service/banner.service';
 

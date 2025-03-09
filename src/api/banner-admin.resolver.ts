@@ -7,12 +7,12 @@ import { BannerService } from '../service/banner.service';
 import { BannerPermission } from '../banner-permissions';
 import {
     QueryBannerArgs,
-    UpdateBannerMutationVariables,
+    MutationUpdateBannerArgs,
     MutationCreateBannerArgs,
     MutationDeleteBannerArgs,
     MutationDeleteBannerSectionArgs,
     QueryBannersArgs,
-} from '../ui/generated/ui';
+} from '../generated-admin-types';
 
 @Resolver()
 export class BannerAdminResolver {
@@ -43,7 +43,7 @@ export class BannerAdminResolver {
     @Allow(BannerPermission.Update)
     async updateBanner(
         @Ctx() ctx: RequestContext,
-        @Args() args: UpdateBannerMutationVariables,
+        @Args() args: MutationUpdateBannerArgs,
         @Relations(Banner) relations: RelationPaths<Banner>,
     ) {
         return this.bannerService.update(ctx, args.input, relations);
