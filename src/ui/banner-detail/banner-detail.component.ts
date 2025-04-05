@@ -43,13 +43,15 @@ function exclusiveProductCollection(control: any): ValidationErrors | null {
     return null;
 }
 
+type BannerDetail = Omit<BannerFragment, 'id'> & { id: string };
+
 @Component({
     selector: 'banner',
     templateUrl: './banner-detail.component.html',
     styleUrls: ['./banner-detail.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BannerDetailComponent extends BaseDetailComponent<BannerFragment> implements OnInit, OnDestroy {
+export class BannerDetailComponent extends BaseDetailComponent<BannerDetail> implements OnInit, OnDestroy {
     detailForm: FormGroup;
 
     banner$: Observable<BannerFragment>;
