@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SharedModule, CanDeactivateDetailGuard } from '@vendure/admin-ui/core';
 import { Observable } from 'rxjs';
-import { Banner } from './generated/ui';
+import { Banner } from './generated-types';
 import { map } from 'rxjs/operators';
 import { BannerListComponent } from './banner-list/banner-list.component';
 import { BannerDetailComponent } from './banner-detail/banner-detail.component';

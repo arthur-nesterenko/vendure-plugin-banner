@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BaseEntityResolver, DataService } from '@vendure/admin-ui/core';
 
-import { GetBannerQuery, GetBannerQueryVariables, BannerFragment } from './../generated/ui';
+import { GetBannerQuery, GetBannerQueryVariables, BannerFragment } from '../generated-types';
 import { GET_BANNER } from './banner-detail.graphql';
 
 @Injectable()

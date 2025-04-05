@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { SharedModule, addNavMenuItem } from '@vendure/admin-ui/core';
-import { Permission } from './generated/ui';
+import { Permission } from './generated-types';
 
 @NgModule({
     imports: [SharedModule],
