@@ -3,7 +3,10 @@
     "version": "1.0.0",
     "description": "A plugin for the Vendure e-commerce framework designed to enhance the visual appeal and interactivity of your e-commerce site by allowing for the creation of dynamic banners that can be added to any page.",
     "author": "Arthur Nestererenko <arthur.nesterenko.dev@gmail.com>",
-    "repository": "https://github.com/arthur-nesterenko/vendure-plugin-banner",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/arthur-nesterenko/vendure-plugin-banner.git"
+    },
     "license": "MIT",
     "private": false,
     "engines": {
