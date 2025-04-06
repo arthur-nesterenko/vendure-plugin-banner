@@ -1,6 +1,6 @@
 {
     "name": "vendure-banner-plugin",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "A plugin for the Vendure e-commerce framework designed to enhance the visual appeal and interactivity of your e-commerce site by allowing for the creation of dynamic banners that can be added to any page.",
     "author": "Arthur Nestererenko <arthur.nesterenko.dev@gmail.com>",
     "repository": {
