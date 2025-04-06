@@ -201,16 +201,15 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerDetail> imp
                     );
                 }),
             )
-
             .subscribe({
-                next: res => {
+                next: () => {
                     this.detailForm.markAsPristine();
                     this.changeDetector.markForCheck();
                     this.notificationService.success('common.notify-create-success', {
                         entity: 'Banner',
                     });
 
-                    this.router.navigate(['../', res.createBanner.id], {
+                    this.router.navigate(['../'], {
                         relativeTo: this.route,
                     });
                 },
