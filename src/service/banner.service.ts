@@ -95,10 +95,11 @@ export class BannerService {
         const { sections: inputSections = [], ...bannerInput } = input;
         const sections = await Promise.all(inputSections.map(s => this.createSection(ctx, s)));
 
-        const banner = new Banner({
-            ...bannerInput,
-            sections,
-        });
+        const banner = new Banner();
+
+        Object.assign(banner, bannerInput);
+
+        banner.sections = sections;
 
         const result = await this.connection.getRepository(ctx, Banner).save(banner);
 
@@ -185,7 +186,8 @@ export class BannerService {
         const translations = [];
         if (input.translations) {
             for (const translationInput of input.translations) {
-                const translation = new BannerSectionTranslation(translationInput);
+                const translation = new BannerSectionTranslation();
+                Object.assign(translation, translationInput);
                 translations.push(translation);
             }
         }
