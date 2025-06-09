@@ -3,12 +3,14 @@ import {
     VendureConfig,
     DefaultJobQueuePlugin,
     DefaultSearchPlugin,
+    DefaultSchedulerPlugin,
 } from '@vendure/core';
 import { AssetServerPlugin } from '@vendure/asset-server-plugin';
 import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
 import path from 'path';
 import { BannerPlugin } from '../src';
 import { compileUiExtensions } from '@vendure/ui-devkit/compiler';
+import { GraphiqlPlugin } from '@vendure/graphiql-plugin';
 
 export const headlessConfig: VendureConfig = {
     apiOptions: {
@@ -56,6 +58,8 @@ export const headlessConfig: VendureConfig = {
         DefaultJobQueuePlugin,
         DefaultSearchPlugin,
         BannerPlugin,
+        DefaultSchedulerPlugin.init(),
+        GraphiqlPlugin.init(),
     ],
 };
 
