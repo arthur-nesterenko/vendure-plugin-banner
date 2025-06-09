@@ -5,7 +5,9 @@ import { BaseEntityResolver, DataService } from '@vendure/admin-ui/core';
 import { GetBannerQuery, GetBannerQueryVariables, BannerFragment } from '../generated-types';
 import { GET_BANNER } from './banner-detail.graphql';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class BannerDetailResolver extends BaseEntityResolver<BannerFragment> {
     constructor(router: Router, dataService: DataService) {
         super(

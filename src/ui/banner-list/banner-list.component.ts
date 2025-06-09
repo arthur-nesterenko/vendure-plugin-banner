@@ -23,6 +23,7 @@ import { LanguageCode } from '@vendure/core';
 import { EMPTY, Observable, merge } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
 import { debounceTime, takeUntil, switchMap, tap } from 'rxjs/operators';
+import { SharedModule } from '@vendure/admin-ui/core';
 
 export type BannerSearchForm = {
     name: string;
@@ -32,8 +33,9 @@ export type BannerSearchForm = {
     selector: 'banner',
     templateUrl: './banner-list.component.html',
     styleUrls: ['./banner-list.component.scss'],
-
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [SharedModule],
 })
 export class BannerListComponent
     extends BaseListComponent<GetBannersQuery, BannerFragment, GetBannersQueryVariables>

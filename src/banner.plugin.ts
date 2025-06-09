@@ -44,18 +44,7 @@ export class BannerPlugin {
     static ui: AdminUiExtension = {
         translations,
         extensionPath: path.join(__dirname, 'ui'),
-        ngModules: [
-            {
-                type: 'shared',
-                ngModuleFileName: 'banner-ui-extension.module.ts',
-                ngModuleName: 'BannerUiExtensionSharedModule',
-            },
-            {
-                type: 'lazy',
-                route: 'banner',
-                ngModuleFileName: 'banner-ui-lazy.module.ts',
-                ngModuleName: 'BannerUiLazyModule',
-            },
-        ],
+        providers: ['providers.ts'],
+        routes: [{ route: 'banner', filePath: 'routes.ts' }],
     };
 }

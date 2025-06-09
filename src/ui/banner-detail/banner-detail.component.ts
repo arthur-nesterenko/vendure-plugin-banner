@@ -28,6 +28,10 @@ import { LanguageCode } from '@vendure/core';
 import { CREATE_BANNER, UPDATE_BANNER, DELETE_BANNER_SECTION } from './banner-detail.graphql';
 import { marker as _ } from '@biesbjerg/ngx-translate-extract-marker';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { SharedModule } from '@vendure/admin-ui/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { BannerSectionComponent } from '../banner-section/banner-section.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 function exclusiveProductCollection(control: any): ValidationErrors | null {
     const productId = control.get('productId').value;
@@ -50,6 +54,8 @@ type BannerDetail = Omit<BannerFragment, 'id'> & { id: string };
     templateUrl: './banner-detail.component.html',
     styleUrls: ['./banner-detail.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [SharedModule, ReactiveFormsModule, BannerSectionComponent, DragDropModule],
 })
 export class BannerDetailComponent extends BaseDetailComponent<BannerDetail> implements OnInit, OnDestroy {
     detailForm: FormGroup;
@@ -78,7 +84,6 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerDetail> imp
 
     ngOnInit(): void {
         this.init();
-        this.banner$ = this.entity$;
         this.route.paramMap.subscribe(params => {
             this.expandSections = !params.has('id');
         });
@@ -164,7 +169,7 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerDetail> imp
             return;
         }
 
-        combineLatest([this.languageCode$, this.banner$])
+        combineLatest([this.languageCode$, this.entity$])
             .pipe(
                 take(1),
                 mergeMap(([languageCode]) => {
@@ -222,11 +227,12 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerDetail> imp
     }
 
     update() {
-        combineLatest([this.languageCode$, this.banner$])
+        combineLatest([this.languageCode$, this.entity$])
             .pipe(
                 take(1),
                 mergeMap(([languageCode, banner]) => {
                     const formValue = this.detailForm.value;
+
                     const sections = formValue.sections.map((section: any, index: number) => {
                         const sectionEntity = this.bannerSections.find(
                             s => s.id === section.sectionId,
@@ -249,7 +255,10 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerDetail> imp
                                 },
                             }),
                             position: section.position !== undefined ? section.position - 1 : index,
+                            translations: section.translations ? section.translations : [],
                         };
+
+                        section.translations = section.translations ? section.translations : [];
 
                         return omit(translatedSection, ['title', 'description', 'callToAction', 'sectionId']);
                     });
