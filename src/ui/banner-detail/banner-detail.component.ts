@@ -238,30 +238,36 @@ export class BannerDetailComponent extends BaseDetailComponent<BannerDetail> imp
                             s => s.id === section.sectionId,
                         ) as BannerSectionFragment;
 
-                        if (sectionEntity) {
-                            section.translations = sectionEntity.translations;
-                        }
-
-                        const translatedSection = {
-                            ...createUpdatedTranslatable({
-                                translatable: section,
-                                updatedFields: section,
+                        const translation = createUpdatedTranslatable({
+                            translatable: {
+                                translations: sectionEntity?.translations ?? [],
+                            },
+                            updatedFields: {
+                                title: section.title,
+                                description: section.description,
+                                callToAction: section.callToAction,
+                            },
+                            languageCode,
+                            defaultTranslation: {
                                 languageCode,
-                                defaultTranslation: {
-                                    title: section.title,
-                                    description: section.description,
-                                    callToAction: section.callToAction,
-                                    languageCode,
-                                },
-                            }),
+                                title: section.title,
+                                description: section.description,
+                                callToAction: section.callToAction,
+                            },
+                        });
+
+                        return {
+                            ...translation,
+                            id: section.sectionId,
                             position: section.position !== undefined ? section.position - 1 : index,
-                            translations: section.translations ? section.translations : [],
+                            productId: section.productId,
+                            collectionId: section.collectionId,
+                            externalLink: section.externalLink,
+                            assetId: section.assetId,
                         };
-
-                        section.translations = section.translations ? section.translations : [];
-
-                        return omit(translatedSection, ['title', 'description', 'callToAction', 'sectionId']);
                     });
+
+                    console.log('sections to send to update banner', sections);
 
                     return this.dataService.mutate<UpdateBannerMutation, UpdateBannerMutationVariables>(
                         UPDATE_BANNER,

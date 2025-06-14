@@ -15,7 +15,6 @@ import {
     TranslatableSaver,
 } from '@vendure/core';
 import { Banner } from '../entities/banner.entity';
-
 import { BannerSection } from '../entities/banner-section.entity';
 import { BannerSectionTranslation } from '../entities/banner-section-translation.entity';
 import { BannerSectionInput, CreateBannerInput, UpdateBannerInput } from '../generated-admin-types';
