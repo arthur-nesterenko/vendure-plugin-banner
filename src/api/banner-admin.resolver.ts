@@ -35,7 +35,7 @@ export class BannerAdminResolver {
         @Args() args: QueryBannerArgs,
         @Relations(Banner) relations: RelationPaths<Banner>,
     ) {
-        return this.bannerService.findOne(ctx, args.id, relations);
+        return this.bannerService.findOne(ctx, args.id, relations, false);
     }
 
     @Transaction()
