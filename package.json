@@ -32,7 +32,8 @@
         "lint:fix": "npm run lint --fix",
         "commit": "git-cz",
         "e2e": "vitest",
-        "e2e:watch": "vitest --watch"
+        "e2e:watch": "vitest --watch",
+        "tsc": "tsc --noEmit"
     },
     "devDependencies": {
         "@commitlint/cli": "^19.7.1",
