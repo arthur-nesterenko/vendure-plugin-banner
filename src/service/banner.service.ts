@@ -12,15 +12,12 @@ import {
     Asset,
     Product,
     Collection,
+    TranslatableSaver,
 } from '@vendure/core';
-import { omit } from '@vendure/common/lib/omit';
 import { Banner } from '../entities/banner.entity';
 import { BannerSection } from '../entities/banner-section.entity';
 import { BannerSectionTranslation } from '../entities/banner-section-translation.entity';
 import { BannerSectionInput, CreateBannerInput, UpdateBannerInput } from '../generated-admin-types';
-
-import { TranslationDiffer } from '@vendure/core/dist/service/helpers/translatable-saver/translation-differ';
-import { patchEntity } from '@vendure/core/dist/service/helpers/utils/patch-entity';
 
 @Injectable()
 export class BannerService {
@@ -28,6 +25,7 @@ export class BannerService {
         private connection: TransactionalConnection,
         private translator: TranslatorService,
         private listQueryBuilder: ListQueryBuilder,
+        private translatableSaver: TranslatableSaver,
     ) {}
 
     async findByName(
@@ -72,10 +70,15 @@ export class BannerService {
         };
     }
 
-    async findOne(ctx: RequestContext, id: ID, relations?: RelationPaths<Banner>): Promise<Banner | null> {
+    async findOne(
+        ctx: RequestContext,
+        id: ID,
+        relations?: RelationPaths<Banner>,
+        onlyEnabled = true,
+    ): Promise<Banner | null> {
         const banner = await this.connection.getEntityOrThrow(ctx, Banner, id, {
             relations,
-            where: { enabled: true },
+            where: { enabled: onlyEnabled ? true : undefined },
         });
 
         const sections = banner?.sections
@@ -108,6 +111,7 @@ export class BannerService {
 
     async update(ctx: RequestContext, input: UpdateBannerInput, relations?: RelationPaths<Banner>) {
         const { sections = [], ...banner } = input;
+
         const sectionToSave = await Promise.all(sections.map(section => this.upsertSection(ctx, section)));
 
         await this.connection.getRepository(ctx, Banner).save({
@@ -115,7 +119,7 @@ export class BannerService {
             sections: sectionToSave,
         });
 
-        const updatedBanner = this.findOne(ctx, input.id, relations);
+        const updatedBanner = this.findOne(ctx, input.id, relations, false);
         return assertFound(updatedBanner);
     }
 
@@ -132,27 +136,14 @@ export class BannerService {
             return this.createSection(ctx, input);
         }
 
-        const existingTranslations = await this.connection.getRepository(ctx, BannerSectionTranslation).find({
-            where: { base: { id: input.id } },
-            relations: ['base'],
+        const updatedSection = await this.translatableSaver.update({
+            ctx,
+            entityType: BannerSection,
+            translationType: BannerSectionTranslation,
+            input: input as Required<BannerSectionInput>,
         });
 
-        const differ = new TranslationDiffer(BannerSectionTranslation as any, this.connection);
-
-        const diff = differ.diff(existingTranslations, input.translations);
-
-        const section = await this.createSectionWithoutTranslation(ctx, input);
-
-        section.translations = existingTranslations;
-
-        const bannerEntity = await differ.applyDiff(ctx, section, diff);
-
-        // @ts-ignore
-        bannerEntity.updatedAt = new Date();
-
-        const updatedEntity = patchEntity(bannerEntity as any, omit(input, ['translations']));
-
-        return updatedEntity;
+        return updatedSection;
     };
 
     private createSectionWithoutTranslation = async (ctx: RequestContext, input: BannerSectionInput) => {

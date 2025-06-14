@@ -12,6 +12,7 @@ import { BannerSectionFragment, CollectionList } from '../generated-types';
 import { Subject, Observable, of, concat } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap, takeUntil, map } from 'rxjs/operators';
 import { gql } from '@apollo/client/core';
+import { SharedModule } from '@vendure/admin-ui/core';
 
 type CollectionItem = CollectionList['items'][number];
 
@@ -27,6 +28,7 @@ interface BannerSectionForm {
     selector: 'banner-section',
     templateUrl: './banner-section.component.html',
     styleUrls: ['./banner-section.component.scss'],
+    imports: [SharedModule],
 })
 export class BannerSectionComponent implements OnInit, OnDestroy {
     @Input() section: FormGroup;

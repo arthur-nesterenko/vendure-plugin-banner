@@ -1,21 +1,30 @@
 {
     "compilerOptions": {
-        "lib": ["es2022"],
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "target": "es2022",
+        "strictPropertyInitialization": false,
+        "target": "es2019",
         "strict": true,
         "sourceMap": false,
         "skipLibCheck": true,
-        "types": ["node"],
-        "declaration": true,
-        "strictPropertyInitialization": false,
-        "outDir": "dist"
+        "outDir": "./dist",
+        "baseUrl": "./"
     },
-    "exclude": ["src/ui"],
-    "include": ["src"]
+    "exclude": [
+        "node_modules",
+        "migration.ts",
+        "src/plugins/**/ui/*",
+        "src/plugins/**/dashboard/*",
+        "**/*admin-ui",
+        "vite.*.*ts",
+        "*.config.ts",
+        "e2e"
+    ],
+    "ts-node": {
+        "files": true
+    }
 }

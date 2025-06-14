@@ -3,14 +3,32 @@ import {
     VendureConfig,
     DefaultJobQueuePlugin,
     DefaultSearchPlugin,
+    DefaultSchedulerPlugin,
 } from '@vendure/core';
 import { AssetServerPlugin } from '@vendure/asset-server-plugin';
 import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
 import path from 'path';
 import { BannerPlugin } from '../src';
 import { compileUiExtensions } from '@vendure/ui-devkit/compiler';
+import { GraphiqlPlugin } from '@vendure/graphiql-plugin';
 
-export const headlessConfig: VendureConfig = {
+export const headlessConfig: Partial<VendureConfig> = {
+    customFields: {},
+    plugins: [
+        AssetServerPlugin.init({
+            route: 'assets',
+            assetUploadDir: path.join(__dirname, './static/assets'),
+        }),
+        DefaultJobQueuePlugin,
+        DefaultSearchPlugin,
+        BannerPlugin,
+        DefaultSchedulerPlugin.init(),
+        GraphiqlPlugin.init(),
+    ],
+};
+
+export const config: VendureConfig = {
+    ...headlessConfig,
     apiOptions: {
         port: 4000,
         adminApiPath: 'admin-api',
@@ -47,20 +65,6 @@ export const headlessConfig: VendureConfig = {
     paymentOptions: {
         paymentMethodHandlers: [dummyPaymentHandler],
     },
-    customFields: {},
-    plugins: [
-        AssetServerPlugin.init({
-            route: 'assets',
-            assetUploadDir: path.join(__dirname, './static/assets'),
-        }),
-        DefaultJobQueuePlugin,
-        DefaultSearchPlugin,
-        BannerPlugin,
-    ],
-};
-
-export const config: VendureConfig = {
-    ...headlessConfig,
     plugins: [
         ...(headlessConfig.plugins || []),
         AdminUiPlugin.init({
