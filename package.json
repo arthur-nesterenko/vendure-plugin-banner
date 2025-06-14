@@ -23,7 +23,7 @@
         "run:worker": "ts-node ./dev-server/index-worker.ts",
         "watch": "ts-node-dev  ./dev-server/index.ts",
         "start": "concurrently npm:run:*",
-        "build": "rimraf dist && npm run copy-assets && npm run codegen && tsc",
+        "build": "rimraf dist && yarn codegen && tsc -p ./tsconfig.build.json && yarn copy-assets",
         "copy-assets": "ts-node scripts/copy-assets.ts",
         "codegen": "ts-node codegen.ts",
         "prepare": "husky",

@@ -9,21 +9,12 @@
         "strictPropertyInitialization": false,
         "target": "es2019",
         "strict": true,
-        "sourceMap": false,
+        "sourceMap": true,
         "skipLibCheck": true,
         "outDir": "./dist",
         "baseUrl": "./"
     },
-    "exclude": [
-        "node_modules",
-        "migration.ts",
-        "src/plugins/**/ui/*",
-        "src/plugins/**/dashboard/*",
-        "**/*admin-ui",
-        "vite.*.*ts",
-        "*.config.ts",
-        "e2e"
-    ],
+    "exclude": ["node_modules", "dist", "dev-server/admin-ui"],
     "ts-node": {
         "files": true
     }
