@@ -33,7 +33,8 @@
         "commit": "git-cz",
         "e2e": "vitest",
         "e2e:watch": "vitest --watch",
-        "tsc": "tsc --noEmit"
+        "tsc": "tsc --noEmit",
+        "i18n:extract": "lingui extract"
     },
     "devDependencies": {
         "@commitlint/cli": "^19.7.1",
@@ -44,16 +45,16 @@
         "@graphql-codegen/typescript": "^4.1.6",
         "@graphql-codegen/typescript-document-nodes": "^4.0.16",
         "@graphql-codegen/typescript-operations": "^4.6.1",
+        "@lingui/cli": "^5.7.0",
+        "@lingui/format-po": "^5.7.0",
         "@swc/core": "^1.11.31",
         "@types/eslint__js": "^8.42.3",
         "@types/fs-extra": "^11.0.4",
         "@types/node": "^22.15.30",
-        "@vendure/admin-ui-plugin": "3.3.3",
-        "@vendure/asset-server-plugin": "3.3.3",
-        "@vendure/core": "^3.3.3",
-        "@vendure/graphiql-plugin": "^3.3.3",
-        "@vendure/testing": "^3.3.3",
-        "@vendure/ui-devkit": "^3.3.3",
+        "@vendure/asset-server-plugin": "3.5.4",
+        "@vendure/core": "3.5.4",
+        "@vendure/graphiql-plugin": "3.5.2",
+        "@vendure/testing": "3.5.2",
         "better-sqlite3": "^11.10.0",
         "commitizen": "^4.3.1",
         "concurrently": "^9.1.2",
@@ -75,5 +76,10 @@
         "typescript-eslint": "^8.25.0",
         "unplugin-swc": "^1.5.4",
         "vitest": "^3.2.3"
+    },
+    "dependencies": {
+        "@lingui/core": "^5.7.0",
+        "@lingui/react": "^5.7.0",
+        "@vendure/dashboard": "^3.5.2"
     }
 }

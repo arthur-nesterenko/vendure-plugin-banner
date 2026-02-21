@@ -1,21 +1,36 @@
 {
     "compilerOptions": {
-        "module": "nodenext",
-        "moduleResolution": "nodenext",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "outDir": "./build",
+        "forceConsistentCasingInFileNames": true,
+        "noLib": false,
+        "skipLibCheck": true,
+        "lib": ["es2019", "esnext.asynciterable"],
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "strictPropertyInitialization": false,
-        "target": "es2019",
+        "target": "es2017",
         "strict": true,
-        "sourceMap": true,
-        "skipLibCheck": true,
-        "outDir": "./dist",
-        "baseUrl": "./"
+        "strictPropertyInitialization": false,
+        "sourceMap": false,
+        "resolveJsonModule": true
     },
-    "exclude": ["node_modules", "dist", "dev-server/admin-ui"],
-    "ts-node": {
-        "files": true
-    }
+    "include": ["./src/**/*.ts"],
+    "exclude": [
+        "node_modules",
+        "migration.ts",
+        "src/plugins/**/ui/*",
+        "admin-ui",
+        "src/plugins/**/dashboard/*",
+        "src/dashboard/**/*",
+        "vite.*.*ts",
+        "src/gql/**/*.ts"
+    ],
+    "references": [
+        {
+            "path": "./tsconfig.dashboard.json"
+        }
+    ]
 }

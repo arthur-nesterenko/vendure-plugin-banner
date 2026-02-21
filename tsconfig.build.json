@@ -4,6 +4,5 @@
         "outDir": "./dist",
         "declaration": true
     },
-    "files": ["./src/index.ts"],
-    "exclude": ["./src/ui/**/*"]
+    "files": ["./src/index.ts"]
 }
