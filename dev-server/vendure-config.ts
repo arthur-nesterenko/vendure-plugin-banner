@@ -6,10 +6,9 @@ import {
     DefaultSchedulerPlugin,
 } from '@vendure/core';
 import { AssetServerPlugin } from '@vendure/asset-server-plugin';
-import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
 import path from 'path';
 import { BannerPlugin } from '../src';
-import { compileUiExtensions } from '@vendure/ui-devkit/compiler';
+import { DashboardPlugin } from '@vendure/dashboard/plugin';
 import { GraphiqlPlugin } from '@vendure/graphiql-plugin';
 
 export const headlessConfig: Partial<VendureConfig> = {
@@ -67,14 +66,13 @@ export const config: VendureConfig = {
     },
     plugins: [
         ...(headlessConfig.plugins || []),
-        AdminUiPlugin.init({
-            route: 'admin',
-            port: 4002,
-            app: compileUiExtensions({
-                outputPath: path.join(__dirname, 'admin-ui'),
-                devMode: true,
-                extensions: [BannerPlugin.ui],
-            }),
+        DashboardPlugin.init({
+            // The route should correspond to the `base` setting
+            // in the vite.config.mts file
+            route: 'dashboard',
+            // This appDir should correspond to the `build.outDir`
+            // setting in the vite.config.mts file
+            appDir: './dist/dashboard',
         }),
     ],
 };
