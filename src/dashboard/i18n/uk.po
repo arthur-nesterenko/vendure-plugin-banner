@@ -1,0 +1,171 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-02-21 12:12+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: uk\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Add Section"
+msgstr "Додати секцію"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Banner created successfully"
+msgstr "Банер успішно створено"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Banner updated successfully"
+msgstr "Банер успішно оновлено"
+
+#: src/dashboard/components/banner-list.tsx
+msgid "Banners"
+msgstr "Банери"
+
+#: src/dashboard/components/banner-section/components/content-fields.tsx
+msgid "Call to Action"
+msgstr "Виклик до дії"
+
+#: src/dashboard/components/banner-section/components/cover-image.tsx
+msgid "Change"
+msgstr "Змінити"
+
+#: src/dashboard/components/banner-section/components/link-selector.tsx
+msgid "Collection"
+msgstr "Колекція"
+
+#: src/dashboard/components/banner-section/components/cover-image.tsx
+msgid "Cover Image"
+msgstr "Обкладинка"
+
+#: src/dashboard/components/banner-section/components/cover-image.tsx
+msgid "Cover image is required"
+msgstr "Зображення обкладинки є обов'язковим"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Create"
+msgstr "Створити"
+
+#: src/dashboard/components/banner-list.tsx
+msgid "Create Banner"
+msgstr "Створити банер"
+
+#: src/dashboard/components/banner-section/components/header.tsx
+msgid "Delete"
+msgstr "Видалити"
+
+#: src/dashboard/components/banner-section/components/content-fields.tsx
+msgid "Description"
+msgstr "Опис"
+
+#: src/dashboard/components/banner-list.tsx
+msgid "Disabled"
+msgstr "Вимкнено"
+
+#: src/dashboard/components/banner-section/components/content-fields.tsx
+msgid "e.g. Shop Now"
+msgstr "напр. Купити зараз"
+
+#: src/dashboard/components/banner-detail.tsx
+#: src/dashboard/components/banner-list.tsx
+msgid "Enabled"
+msgstr "Увімкнено"
+
+#: src/dashboard/components/banner-section/components/link-selector.tsx
+msgid "External Link"
+msgstr "Зовнішнє посилання"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Failed to delete section"
+msgstr "Не вдалося видалити секцію"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Failed to update banner"
+msgstr "Не вдалося оновити банер"
+
+#: src/dashboard/components/banner-section/components/cover-image.tsx
+msgid "Landscape images work best as banner backgrounds."
+msgstr "Пейзажні зображення найкраще підходять як фон для банерів."
+
+#: src/dashboard/components/banner-section/components/link-selector.tsx
+msgid "Link"
+msgstr "Посилання"
+
+#: src/dashboard/components/banner-section/components/search-results.tsx
+msgid "Loading..."
+msgstr "Завантаження..."
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Name"
+msgstr "Назва"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "New Banner"
+msgstr "Новий банер"
+
+#: src/dashboard/components/banner-section/components/search-results.tsx
+msgid "No results found"
+msgstr "Результатів не знайдено"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "No sections yet. Click \"Add Section\" to create one."
+msgstr "Секцій ще немає. Натисніть \"Додати секцію\", щоб створити."
+
+#: src/dashboard/components/banner-section/components/link-selector.tsx
+msgid "Product"
+msgstr "Продукт"
+
+#: src/dashboard/components/banner-section/components/link-selector.tsx
+msgid "Search for a collection..."
+msgstr "Пошук колекції..."
+
+#: src/dashboard/components/banner-section/components/link-selector.tsx
+msgid "Search for a product..."
+msgstr "Пошук продукту..."
+
+#: src/dashboard/components/banner-list.tsx
+msgid "Section Count"
+msgstr "Кількість секцій"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Section deleted successfully"
+msgstr "Секцію успішно видалено"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Sections"
+msgstr "Секції"
+
+#: src/dashboard/components/banner-section/components/cover-image.tsx
+msgid "Select cover image"
+msgstr "Виберіть обкладинку"
+
+#: src/dashboard/components/banner-section/components/cover-image.tsx
+msgid "Select Cover Image"
+msgstr "Вибрати обкладинку"
+
+#: src/dashboard/components/banner-section/components/content-fields.tsx
+msgid "Title"
+msgstr "Заголовок"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Unknown error"
+msgstr "Невідома помилка"
+
+#: src/dashboard/components/banner-section/components/header.tsx
+msgid "Untitled Section"
+msgstr "Секція без назви"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Update"
+msgstr "Оновити"
+
+#: src/dashboard/components/banner-section/components/link-selector.tsx
+msgid "URL"
+msgstr "URL"
