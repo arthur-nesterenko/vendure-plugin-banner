@@ -31,12 +31,18 @@
         "prettify": "prettier --write . --html-whitespace-sensitivity ignore",
         "lint:fix": "npm run lint --fix",
         "commit": "git-cz",
-        "e2e": "vitest",
-        "e2e:watch": "vitest --watch",
+        "e2e": "vitest run --project e2e",
+        "e2e:watch": "vitest --project e2e --watch",
+        "test:unit": "vitest run --project unit",
+        "test:unit:watch": "vitest --project unit --watch",
+        "test": "vitest run",
         "tsc": "tsc --noEmit",
         "i18n:extract": "lingui extract"
     },
     "devDependencies": {
+        "@testing-library/jest-dom": "^6.6.3",
+        "@testing-library/react": "^16.0.1",
+        "@testing-library/user-event": "^14.5.2",
         "@commitlint/cli": "^19.7.1",
         "@commitlint/config-conventional": "^19.7.1",
         "@commitlint/cz-commitlint": "^19.6.1",
@@ -75,7 +81,10 @@
         "typescript": "5.8.3",
         "typescript-eslint": "^8.25.0",
         "unplugin-swc": "^1.5.4",
-        "vitest": "^3.2.3"
+        "vitest": "^3.2.3",
+        "jsdom": "^25.0.1",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
     },
     "dependencies": {
         "@lingui/core": "^5.7.0",
