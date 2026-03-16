@@ -15,19 +15,16 @@ import {
     CREATE_BANNER,
     UPDATE_BANNER,
     GET_BANNER,
+    DELETE_BANNER,
     DELETE_BANNER_SECTION,
-} from '../src/ui/banner-detail/banner-detail.graphql';
-import { DELETE_BANNER } from '../src/ui/banner-list/banner-list.graphql';
+    GET_ASSET_LIST,
+    GET_BANNER_BY_NAME,
+    GET_BANNER_SHOP,
+} from './graphql';
 import {
-    CreateBannerMutation,
     CreateBannerInput,
-    DeleteBannerMutation,
-    UpdateBannerMutation,
-    DeleteBannerSectionMutation,
-    BannerSectionFragment,
     BannerSectionInput,
-} from '../src/ui/generated-types';
-import { getAssetListDocument, getBannerByNameDocument } from './graphql';
+} from '../src/generated-admin-types';
 
 const sqliteDataDir = path.join(__dirname, '__data__');
 
@@ -37,7 +34,7 @@ let shopClient: SimpleGraphQLClient;
 let serverStarted = false;
 
 const getAssets = async () => {
-    const result = await adminClient.query(getAssetListDocument);
+    const result = await adminClient.query(GET_ASSET_LIST);
     return result.assets.items;
 };
 
@@ -64,7 +61,7 @@ const generateBannerSections = (assetId: string, count = 1) => {
 };
 
 const convertToBannerSectionInput = (
-    sections: BannerSectionFragment[],
+    sections: Array<Record<string, any>>,
     extraSections: BannerSectionInput[] = [],
 ): BannerSectionInput[] => {
     return sections
@@ -92,7 +89,7 @@ const createBanner = async ({
         enabled: true,
         sections: generateBannerSections(asset.id),
     };
-    const result = await adminClient.query<CreateBannerMutation>(CREATE_BANNER, {
+    const result = await adminClient.query(CREATE_BANNER, {
         input: input ?? payload,
     });
 
@@ -150,7 +147,7 @@ describe('Banner Admin API', () => {
         expect(result.id).toBeDefined();
         expect(result.name).toBe('Test Banner to Delete');
         expect(result.sections?.length).toBe(1);
-        const deleteResult = await adminClient.query<DeleteBannerMutation>(DELETE_BANNER, {
+        const deleteResult = await adminClient.query(DELETE_BANNER, {
             input: {
                 id: result.id,
             },
@@ -165,7 +162,7 @@ describe('Banner Admin API', () => {
 
         expect(result.name).toBe('Test Banner to Update');
         expect(result.enabled).toBe(true);
-        const updateResult = await adminClient.query<UpdateBannerMutation>(UPDATE_BANNER, {
+        const updateResult = await adminClient.query(UPDATE_BANNER, {
             input: {
                 id: result.id,
                 name: 'Updated Test Banner',
@@ -268,7 +265,7 @@ describe('Banner Admin API', () => {
             };
 
             const newSections = convertToBannerSectionInput(result.sections ?? [], [newSection]);
-            const updateResult = await adminClient.query<UpdateBannerMutation>(UPDATE_BANNER, {
+            const updateResult = await adminClient.query(UPDATE_BANNER, {
                 input: {
                     id: result.id,
                     sections: newSections,
@@ -307,7 +304,7 @@ describe('Banner Admin API', () => {
                 },
             ]);
 
-            const updateResult = await adminClient.query<UpdateBannerMutation>(UPDATE_BANNER, {
+            const updateResult = await adminClient.query(UPDATE_BANNER, {
                 input: {
                     id: result.id,
                     sections: updatedSections,
@@ -332,7 +329,7 @@ describe('Banner Admin API', () => {
             });
             expect(result.sections).toHaveLength(2);
             // Remove the first section
-            const deleteResult = await adminClient.query<DeleteBannerSectionMutation>(DELETE_BANNER_SECTION, {
+            const deleteResult = await adminClient.query(DELETE_BANNER_SECTION, {
                 input: {
                     id: result.sections?.[0]?.id ?? '',
                 },
@@ -354,7 +351,7 @@ describe('Banner Shop API', () => {
             name,
         });
 
-        const fetchResult = await shopClient.query(getBannerByNameDocument, {
+        const fetchResult = await shopClient.query(GET_BANNER_BY_NAME, {
             name,
         });
 
@@ -366,7 +363,7 @@ describe('Banner Shop API', () => {
         const result = await createBanner({
             name: name,
         });
-        const fetchResult = await shopClient.query(GET_BANNER, {
+        const fetchResult = await shopClient.query(GET_BANNER_SHOP, {
             id: result.id,
         });
         expect(fetchResult.banner.id).toBe(result.id);
@@ -375,7 +372,7 @@ describe('Banner Shop API', () => {
     it('should throw and error if the banner is not found', async () => {
         const name = 'banner_not_found';
         try {
-            await shopClient.query(getBannerByNameDocument, {
+            await shopClient.query(GET_BANNER_BY_NAME, {
                 name,
             });
         } catch (error) {
@@ -383,7 +380,7 @@ describe('Banner Shop API', () => {
         }
 
         try {
-            await shopClient.query(GET_BANNER, {
+            await shopClient.query(GET_BANNER_SHOP, {
                 id: '123',
             });
         } catch (error) {
@@ -400,7 +397,7 @@ describe('Banner Shop API', () => {
             },
         });
         try {
-            await shopClient.query(getBannerByNameDocument, {
+            await shopClient.query(GET_BANNER_BY_NAME, {
                 name,
             });
         } catch (error) {
@@ -408,7 +405,7 @@ describe('Banner Shop API', () => {
         }
 
         try {
-            await shopClient.query(GET_BANNER, {
+            await shopClient.query(GET_BANNER_SHOP, {
                 id: result.id,
             });
         } catch (error) {
