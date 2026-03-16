@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from 'graphql-tag';
 
 export const BANNER_SECTION_FRAGMENT = gql`
     fragment BannerSection on BannerSection {

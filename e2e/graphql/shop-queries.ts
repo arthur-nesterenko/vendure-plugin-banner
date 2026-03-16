@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from 'graphql-tag';
 import { BANNER_FRAGMENT } from './fragments';
 
 export const GET_BANNER_BY_NAME = gql`
