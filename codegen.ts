@@ -13,6 +13,5 @@ generateTypes(
     {
         pluginDir: __dirname,
         common: true,
-        ui: true,
     },
 ).then(() => process.exit(0));
