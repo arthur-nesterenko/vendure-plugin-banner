@@ -136,12 +136,46 @@ export class BannerService {
             return this.createSection(ctx, input);
         }
 
+        // Update translatable fields (title, description, callToAction per language)
         const updatedSection = await this.translatableSaver.update({
             ctx,
             entityType: BannerSection,
             translationType: BannerSectionTranslation,
             input: input as Required<BannerSectionInput>,
         });
+
+        // Update non-translatable fields that TranslatableSaver doesn't handle
+        const sectionRepo = this.connection.getRepository(ctx, BannerSection);
+        const updatePayload: Record<string, any> = {};
+
+        if (input.externalLink !== undefined) {
+            updatePayload.externalLink = input.externalLink;
+        }
+        if (input.position !== undefined) {
+            updatePayload.position = input.position;
+        }
+        if (input.assetId !== undefined) {
+            updatePayload.asset = input.assetId
+                ? await this.connection.getEntityOrThrow(ctx, Asset, input.assetId)
+                : null;
+        }
+        if (input.productId !== undefined) {
+            updatePayload.product = input.productId
+                ? await this.connection.getEntityOrThrow(ctx, Product, input.productId)
+                : null;
+        }
+        if (input.collectionId !== undefined) {
+            updatePayload.collection = input.collectionId
+                ? await this.connection.getEntityOrThrow(ctx, Collection, input.collectionId)
+                : null;
+        }
+
+        if (Object.keys(updatePayload).length > 0) {
+            return sectionRepo.save({
+                ...updatedSection,
+                ...updatePayload,
+            });
+        }
 
         return updatedSection;
     };
