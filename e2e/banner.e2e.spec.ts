@@ -316,6 +316,47 @@ describe('Banner Admin API', () => {
             expect(updateResult.updateBanner.sections?.[0]?.translations?.[0]?.title).toBe('Updated Title');
         });
 
+        it('should update non-translatable fields on existing section', async () => {
+            const [asset] = await getAssets();
+            const result = await createBanner({
+                input: {
+                    name: 'Update Non-Translatable Banner',
+                    enabled: true,
+                    sections: generateBannerSections(asset.id, 1),
+                },
+            });
+
+            const section = result.sections[0];
+            expect(section.externalLink).toBe('https://section1.com');
+
+            // Update only the externalLink and position on the existing section
+            const updateResult = await adminClient.query(UPDATE_BANNER, {
+                input: {
+                    id: result.id,
+                    sections: [
+                        {
+                            id: section.id,
+                            assetId: section.asset?.id,
+                            externalLink: 'https://updated-link.com',
+                            position: 99,
+                            translations: section.translations.map((t: any) => ({
+                                id: t.id,
+                                languageCode: t.languageCode,
+                                title: t.title,
+                                description: t.description,
+                                callToAction: t.callToAction,
+                            })),
+                        },
+                    ],
+                },
+            });
+
+            const updatedSection = updateResult.updateBanner.sections[0];
+            // These assertions will FAIL before the fix:
+            expect(updatedSection.externalLink).toBe('https://updated-link.com');
+            expect(updatedSection.position).toBe(99);
+        });
+
         it('should remove a section', async () => {
             // Create with two sections
             const [asset] = await getAssets();
