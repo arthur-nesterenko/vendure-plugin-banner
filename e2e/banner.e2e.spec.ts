@@ -357,6 +357,101 @@ describe('Banner Admin API', () => {
             expect(updatedSection.position).toBe(99);
         });
 
+        it('should update product link on an existing section', async () => {
+            const [asset] = await getAssets();
+            const result = await createBanner({
+                input: {
+                    name: 'Update Product Link Banner',
+                    enabled: true,
+                    sections: [{
+                        assetId: asset.id,
+                        externalLink: 'https://example.com',
+                        position: 1,
+                        translations: [{
+                            languageCode: LanguageCode.en,
+                            title: 'Section',
+                            description: 'Desc',
+                            callToAction: 'CTA',
+                        }],
+                    }],
+                },
+            });
+
+            const section = result.sections[0];
+            expect(section.product).toBeNull();
+
+            const updateResult = await adminClient.query(UPDATE_BANNER, {
+                input: {
+                    id: result.id,
+                    sections: [{
+                        id: section.id,
+                        assetId: section.asset?.id,
+                        productId: 'T_1',
+                        externalLink: null,
+                        position: section.position,
+                        translations: section.translations.map((t: any) => ({
+                            id: t.id,
+                            languageCode: t.languageCode,
+                            title: t.title,
+                            description: t.description,
+                            callToAction: t.callToAction,
+                        })),
+                    }],
+                },
+            });
+
+            expect(updateResult.updateBanner.sections[0].product).toBeDefined();
+            expect(updateResult.updateBanner.sections[0].product?.id).toBe('T_1');
+            expect(updateResult.updateBanner.sections[0].externalLink).toBeNull();
+        });
+
+        it('should update asset on an existing section', async () => {
+            const assets = await getAssets();
+            expect(assets.length).toBeGreaterThanOrEqual(2);
+            const [asset1, asset2] = assets;
+
+            const result = await createBanner({
+                input: {
+                    name: 'Update Asset Banner',
+                    enabled: true,
+                    sections: [{
+                        assetId: asset1.id,
+                        externalLink: 'https://example.com',
+                        position: 1,
+                        translations: [{
+                            languageCode: LanguageCode.en,
+                            title: 'Section',
+                            description: 'Desc',
+                            callToAction: 'CTA',
+                        }],
+                    }],
+                },
+            });
+
+            const section = result.sections[0];
+            expect(section.asset?.id).toBe(asset1.id);
+
+            const updateResult = await adminClient.query(UPDATE_BANNER, {
+                input: {
+                    id: result.id,
+                    sections: [{
+                        id: section.id,
+                        assetId: asset2.id,
+                        position: section.position,
+                        translations: section.translations.map((t: any) => ({
+                            id: t.id,
+                            languageCode: t.languageCode,
+                            title: t.title,
+                            description: t.description,
+                            callToAction: t.callToAction,
+                        })),
+                    }],
+                },
+            });
+
+            expect(updateResult.updateBanner.sections[0].asset?.id).toBe(asset2.id);
+        });
+
         it('should remove a section', async () => {
             // Create with two sections
             const [asset] = await getAssets();
