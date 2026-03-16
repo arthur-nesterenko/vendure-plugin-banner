@@ -452,6 +452,94 @@ describe('Banner Admin API', () => {
             expect(updateResult.updateBanner.sections[0].asset?.id).toBe(asset2.id);
         });
 
+        it('should update only translations on an existing section', async () => {
+            const [asset] = await getAssets();
+            const result = await createBanner({
+                input: {
+                    name: 'Update Translations Banner',
+                    enabled: true,
+                    sections: generateBannerSections(asset.id, 1),
+                },
+            });
+
+            const section = result.sections[0];
+            const updateResult = await adminClient.query(UPDATE_BANNER, {
+                input: {
+                    id: result.id,
+                    sections: [{
+                        id: section.id,
+                        assetId: section.asset?.id,
+                        position: section.position,
+                        translations: [{
+                            id: section.translations[0].id,
+                            languageCode: LanguageCode.en,
+                            title: 'Updated EN Title',
+                            description: 'Updated EN Desc',
+                            callToAction: 'Updated EN CTA',
+                        }],
+                    }],
+                },
+            });
+
+            const updatedSection = updateResult.updateBanner.sections[0];
+            expect(updatedSection.translations[0].title).toBe('Updated EN Title');
+            expect(updatedSection.translations[0].description).toBe('Updated EN Desc');
+            expect(updatedSection.translations[0].callToAction).toBe('Updated EN CTA');
+            expect(updatedSection.externalLink).toBe(section.externalLink);
+            expect(updatedSection.asset?.id).toBe(section.asset?.id);
+        });
+
+        it('should handle mixed create and update sections in one mutation', async () => {
+            const [asset] = await getAssets();
+            const result = await createBanner({
+                input: {
+                    name: 'Mixed Sections Banner',
+                    enabled: true,
+                    sections: generateBannerSections(asset.id, 1),
+                },
+            });
+
+            expect(result.sections).toHaveLength(1);
+            const existingSection = result.sections[0];
+
+            const updateResult = await adminClient.query(UPDATE_BANNER, {
+                input: {
+                    id: result.id,
+                    sections: [
+                        {
+                            id: existingSection.id,
+                            assetId: existingSection.asset?.id,
+                            externalLink: 'https://updated.com',
+                            position: 1,
+                            translations: existingSection.translations.map((t: any) => ({
+                                id: t.id,
+                                languageCode: t.languageCode,
+                                title: 'Updated',
+                                description: t.description,
+                                callToAction: t.callToAction,
+                            })),
+                        },
+                        {
+                            assetId: asset.id,
+                            externalLink: 'https://new-section.com',
+                            position: 2,
+                            translations: [{
+                                languageCode: LanguageCode.en,
+                                title: 'New Section',
+                                description: 'New Desc',
+                                callToAction: 'New CTA',
+                            }],
+                        },
+                    ],
+                },
+            });
+
+            expect(updateResult.updateBanner.sections).toHaveLength(2);
+            expect(updateResult.updateBanner.sections[0].externalLink).toBe('https://updated.com');
+            expect(updateResult.updateBanner.sections[0].translations[0].title).toBe('Updated');
+            expect(updateResult.updateBanner.sections[1].externalLink).toBe('https://new-section.com');
+        });
+
         it('should remove a section', async () => {
             // Create with two sections
             const [asset] = await getAssets();
@@ -505,47 +593,30 @@ describe('Banner Shop API', () => {
         expect(fetchResult.banner.id).toBe(result.id);
     });
 
-    it('should throw and error if the banner is not found', async () => {
-        const name = 'banner_not_found';
-        try {
-            await shopClient.query(GET_BANNER_BY_NAME, {
-                name,
-            });
-        } catch (error) {
-            expect(error).toBeDefined();
-        }
+    it('should throw an error if the banner is not found', async () => {
+        await expect(
+            shopClient.query(GET_BANNER_BY_NAME, { name: 'nonexistent_banner' }),
+        ).rejects.toThrow();
 
-        try {
-            await shopClient.query(GET_BANNER_SHOP, {
-                id: '123',
-            });
-        } catch (error) {
-            expect(error).toBeDefined();
-        }
+        await expect(
+            shopClient.query(GET_BANNER_SHOP, { id: '999999' }),
+        ).rejects.toThrow();
     });
 
     it('should return an error if the banner is not enabled', async () => {
-        const name = 'banner_not_enabled';
         const result = await createBanner({
             input: {
-                name,
+                name: 'shop_disabled_banner',
                 enabled: false,
             },
         });
-        try {
-            await shopClient.query(GET_BANNER_BY_NAME, {
-                name,
-            });
-        } catch (error) {
-            expect(error).toBeDefined();
-        }
 
-        try {
-            await shopClient.query(GET_BANNER_SHOP, {
-                id: result.id,
-            });
-        } catch (error) {
-            expect(error).toBeDefined();
-        }
+        await expect(
+            shopClient.query(GET_BANNER_BY_NAME, { name: 'shop_disabled_banner' }),
+        ).rejects.toThrow();
+
+        await expect(
+            shopClient.query(GET_BANNER_SHOP, { id: result.id }),
+        ).rejects.toThrow();
     });
 });
