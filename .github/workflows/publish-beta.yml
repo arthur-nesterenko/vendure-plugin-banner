@@ -1,5 +1,9 @@
 name: Publish Beta
 
+concurrency:
+    group: beta-publish-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
+
 on:
     pull_request_target:
         types: [labeled, synchronize]
