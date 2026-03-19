@@ -25,6 +25,9 @@ jobs:
             - name: Install dependencies
               run: npm ci
 
+            - name: Install sharp for Linux
+              run: npm install --os=linux --cpu=x64 sharp
+
             - name: Run Prettier
               run: npm run prettify -- --check
 
