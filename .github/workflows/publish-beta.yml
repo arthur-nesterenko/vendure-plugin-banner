@@ -1,18 +1,22 @@
 name: Publish Beta
 
 on:
-    pull_request:
+    pull_request_target:
         types: [labeled, synchronize]
         branches:
             - main
 
 jobs:
     beta:
-        if: contains(github.event.pull_request.labels.*.name, 'beta')
+        if: >-
+            contains(github.event.pull_request.labels.*.name, 'beta') &&
+            github.event.pull_request.head.repo.full_name == github.repository
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout repository
+            - name: Checkout PR branch
               uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.event.pull_request.head.sha }}
 
             - name: Set up Node.js
               uses: actions/setup-node@v4
