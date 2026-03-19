@@ -23,7 +23,7 @@
         "run:worker": "ts-node ./dev-server/index-worker.ts",
         "watch": "ts-node-dev  ./dev-server/index.ts",
         "start": "concurrently npm:run:*",
-        "build": "rimraf dist && yarn codegen && tsc -p ./tsconfig.build.json && yarn copy-assets",
+        "build": "rimraf dist && npm run codegen && tsc -p ./tsconfig.build.json && npm run copy-assets",
         "copy-assets": "ts-node scripts/copy-assets.ts",
         "codegen": "ts-node codegen.ts",
         "prepare": "husky",
@@ -57,10 +57,10 @@
         "@types/eslint__js": "^8.42.3",
         "@types/fs-extra": "^11.0.4",
         "@types/node": "^22.15.30",
-        "@vendure/asset-server-plugin": "3.5.4",
-        "@vendure/core": "3.5.4",
-        "@vendure/graphiql-plugin": "3.5.2",
-        "@vendure/testing": "3.5.2",
+        "@vendure/asset-server-plugin": "3.5.5",
+        "@vendure/core": "3.5.5",
+        "@vendure/graphiql-plugin": "3.5.5",
+        "@vendure/testing": "3.5.5",
         "better-sqlite3": "^11.10.0",
         "commitizen": "^4.3.1",
         "concurrently": "^9.1.2",
@@ -83,12 +83,10 @@
         "unplugin-swc": "^1.5.4",
         "vitest": "^3.2.3",
         "jsdom": "^25.0.1",
-        "react": "^18.3.1",
-        "react-dom": "^18.3.1"
-    },
-    "dependencies": {
+        "react": "^19.2.4",
+        "react-dom": "^19.2.4",
         "@lingui/core": "^5.7.0",
         "@lingui/react": "^5.7.0",
-        "@vendure/dashboard": "^3.5.2"
+        "@vendure/dashboard": "^3.5.5"
     }
 }

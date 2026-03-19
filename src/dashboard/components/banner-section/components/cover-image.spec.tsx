@@ -5,24 +5,14 @@ import { CoverImage } from './cover-image';
 
 describe('CoverImage', () => {
     it('renders empty state with select button when no asset is selected', () => {
-        render(
-            <CoverImage
-                selectedAsset={null}
-                onAssetSelected={vi.fn()}
-                onAssetRemoved={vi.fn()}
-            />,
-        );
+        render(<CoverImage selectedAsset={null} onAssetSelected={vi.fn()} onAssetRemoved={vi.fn()} />);
         expect(screen.getByText('Select cover image')).toBeInTheDocument();
     });
 
     it('renders asset preview when asset is selected', () => {
         const asset = { id: '1', preview: 'https://example.com/image.jpg', name: 'hero.jpg' };
         render(
-            <CoverImage
-                selectedAsset={asset as any}
-                onAssetSelected={vi.fn()}
-                onAssetRemoved={vi.fn()}
-            />,
+            <CoverImage selectedAsset={asset as any} onAssetSelected={vi.fn()} onAssetRemoved={vi.fn()} />,
         );
         expect(screen.getByTestId('vendure-image')).toBeInTheDocument();
         expect(screen.getByText('hero.jpg')).toBeInTheDocument();
