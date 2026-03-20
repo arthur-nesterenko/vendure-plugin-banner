@@ -1,37 +1,39 @@
 # Vendure Banner Plugin
 
-A plugin for [Vendure](https://www.vendure.io/) that adds dynamic promotional banners to your e-commerce store. Create banners with multiple sections, each with translatable content, cover images, and links to products or collections.
+A plugin for [Vendure](https://www.vendure.io/) that adds dynamic promotional banners to your e-commerce store. Create banners with multiple sections, each featuring translatable content, cover images, and links to products, collections, or external URLs.
 
-> **v1 users:** The v1.x branch with the legacy Angular UI is maintained at [`v1`](https://github.com/arthur-nesterenko/vendure-plugin-banner/tree/v1).
+## Version Compatibility
+
+| Plugin version | Vendure version | Admin UI | Status |
+|---|---|---|---|
+| **2.x** (current) | 3.x | React Dashboard | Active development |
+| [**1.x**](https://github.com/arthur-nesterenko/vendure-plugin-banner/tree/v1) | 2.x – 3.x | Angular (`compileUiExtensions`) | Maintenance only |
+
+> **Important:** v2 completely removes Angular UI support. If your project relies on the Angular-based admin UI or `compileUiExtensions`, use the [`v1` branch](https://github.com/arthur-nesterenko/vendure-plugin-banner/tree/v1) and install with `npm install vendure-banner-plugin@^1.0.0`.
 
 ## Features
 
-- Multi-section banners with drag-and-drop ordering
-- Translatable content (title, description, call-to-action)
-- Link sections to products, collections, or external URLs
-- Cover images via Vendure asset system
-- Shop API for storefront queries (by ID or name)
-- Custom permission for admin access control
-- React-based dashboard UI (Vendure 3.x Dashboard)
+- **Multi-section banners** — each banner supports multiple sections with independent content and ordering
+- **Translatable content** — title, description, and call-to-action text per language (English, Ukrainian, Polish)
+- **Flexible linking** — link each section to a product, collection, or external URL
+- **Cover images** — attach images from the Vendure asset system
+- **Shop API** — query banners by ID or name for your storefront
+- **Access control** — dedicated permission for banner management in the admin
 
 ## Requirements
 
 - Vendure `^3.0.0`
 - Node.js `>=22`
 
-## Installation
+## Getting Started
+
+### 1. Install the plugin
 
 ```bash
 npm install vendure-banner-plugin
 ```
 
-For the v2 prerelease with the new React dashboard:
-
-```bash
-npm install vendure-banner-plugin@next
-```
-
-## Configuration
+### 2. Add it to your Vendure config
 
 ```typescript
 import { BannerPlugin } from 'vendure-banner-plugin';
@@ -44,15 +46,28 @@ export const config: VendureConfig = {
 };
 ```
 
-That's it — the dashboard UI registers automatically via the `dashboard` entry point. No `compileUiExtensions` or `AdminUiPlugin` setup needed.
+The dashboard UI registers automatically. No `compileUiExtensions`, `AdminUiPlugin`, or additional build configuration is required.
 
-## GraphQL API
+### 3. Run a database migration
 
-### Shop API
+The plugin adds new tables for banners, sections, and translations. Generate and apply a migration:
+
+```bash
+npx vendure migrate
+```
+
+### 4. Manage banners
+
+Open the Vendure dashboard. You'll find a **Banners** section in the navigation where you can create, edit, and organize your banners.
+
+## Querying Banners (Shop API)
+
+Use the Shop API to fetch banners on your storefront.
+
+**Get a banner by name:**
 
 ```graphql
-# Get a banner by name
-query GetBanner {
+query {
     bannerByName(name: "homepage-hero") {
         id
         name
@@ -79,77 +94,89 @@ query GetBanner {
 }
 ```
 
-### Admin API
+**Get a banner by ID:**
 
 ```graphql
-# List all banners
-query ListBanners {
-    banners {
-        items {
-            id
-            name
-            enabled
-        }
-        totalItems
-    }
-}
-
-# Create a banner
-mutation CreateBanner {
-    createBanner(input: {
-        name: "homepage-hero"
-        enabled: true
-        sections: [{
-            position: 0
-            assetId: "1"
-            productId: "42"
-            translations: [{
-                languageCode: en
-                title: "Summer Sale"
-                description: "Up to 50% off"
-                callToAction: "Shop Now"
-            }]
-        }]
-    }) {
+query {
+    banner(id: "1") {
         id
+        name
+        sections {
+            title
+            callToAction
+            asset {
+                preview
+            }
+        }
     }
 }
 ```
 
-## Migrating from v1
+## Migrating from v1 to v2
 
-v2 replaces the Angular admin UI with a React-based dashboard. The backend API is unchanged.
+v2 is a major update that replaces the Angular admin UI with a native React-based Vendure Dashboard extension. **The backend API and database schema are unchanged** — no data migration is needed.
+
+### What changed
 
 | | v1 | v2 |
 |---|---|---|
-| Admin UI | Angular (`compileUiExtensions`) | React Dashboard (automatic) |
-| Vendure | 2.x – 3.x | 3.x |
-| i18n | JSON files | Lingui (`.po` files) |
-| Languages | English, Ukrainian | English, Ukrainian, Polish |
+| **Admin UI** | Angular with `compileUiExtensions` | React Dashboard (auto-registered) |
+| **UI setup** | Manual `AdminUiPlugin` configuration | Zero-config — just add `BannerPlugin` |
+| **Vendure** | 2.x – 3.x | 3.x only |
+| **i18n format** | JSON translation files | Lingui `.po` files |
+| **Languages** | English, Ukrainian | English, Ukrainian, Polish |
+| **Node.js** | >=18 | >=22 |
 
-To migrate, update the plugin and remove the `AdminUiPlugin` / `compileUiExtensions` setup — the dashboard UI is now registered automatically.
+### Step-by-step migration
+
+1. **Update the plugin:**
+
+    ```bash
+    npm install vendure-banner-plugin@latest
+    ```
+
+2. **Remove the old UI extension setup.** In your Vendure config, delete the `BannerPlugin.ui` reference and any related `compileUiExtensions` configuration:
+
+    ```diff
+    - import { compileUiExtensions } from '@vendure/ui-devkit/compiler';
+
+      export const config: VendureConfig = {
+          plugins: [
+              BannerPlugin,
+    -         AdminUiPlugin.init({
+    -             port: 3002,
+    -             route: 'admin',
+    -             app: compileUiExtensions({
+    -                 outputPath: path.join(__dirname, '../admin-ui'),
+    -                 extensions: [BannerPlugin.ui],
+    -             }),
+    -         }),
+          ],
+      };
+    ```
+
+3. **Verify.** Start your Vendure server and open the dashboard. The Banners section should appear automatically.
+
+### Staying on v1
+
+If you're not ready to migrate or need the Angular UI, pin your dependency to v1:
+
+```bash
+npm install vendure-banner-plugin@^1.0.0
+```
+
+The v1 branch receives security fixes only. New features are developed exclusively on v2.
 
 ## Development
 
 ```bash
-# Install dependencies
-npm install
-
-# Start dev server
-npm run start
-
-# Run e2e tests
-npm run e2e
-
-# Run unit tests
-npm run test:unit
-
-# Lint & format
-npm run lint
-npm run prettify
-
-# Build for production
-npm run build
+npm install          # Install dependencies
+npm run start        # Start dev server
+npm run e2e          # Run e2e tests
+npm run test:unit    # Run unit tests
+npm run lint         # Lint
+npm run prettify     # Format
+npm run build        # Production build
 ```
 
 ## License
