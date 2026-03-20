@@ -1,5 +1,10 @@
 # Vendure Banner Plugin
 
+[![npm version](https://img.shields.io/npm/v/vendure-banner-plugin.svg)](https://www.npmjs.com/package/vendure-banner-plugin)
+[![npm downloads](https://img.shields.io/npm/dm/vendure-banner-plugin.svg)](https://www.npmjs.com/package/vendure-banner-plugin)
+[![license](https://img.shields.io/npm/l/vendure-banner-plugin.svg)](https://github.com/arthur-nesterenko/vendure-plugin-banner/blob/main/LICENSE)
+[![Code Quality](https://github.com/arthur-nesterenko/vendure-plugin-banner/actions/workflows/code-quality.yml/badge.svg)](https://github.com/arthur-nesterenko/vendure-plugin-banner/actions/workflows/code-quality.yml)
+
 A plugin for [Vendure](https://www.vendure.io/) that adds dynamic promotional banners to your e-commerce store. Create banners with multiple sections, each featuring translatable content, cover images, and links to products, collections, or external URLs.
 
 ## Version Compatibility
