@@ -1,26 +1,37 @@
 # Vendure Banner Plugin
 
-This is a plugin for the [Vendure e-commerce framework](https://www.vendure.io/) designed to enhance the visual appeal and interactivity of your e-commerce site. The Vendure Banner Plugin allows for the creation of dynamic banners that can be added to any page.
+A plugin for [Vendure](https://www.vendure.io/) that adds dynamic promotional banners to your e-commerce store. Create banners with multiple sections, each with translatable content, cover images, and links to products or collections.
 
-## Getting Started
+> **v1 users:** The v1.x branch with the legacy Angular UI is maintained at [`v1`](https://github.com/arthur-nesterenko/vendure-plugin-banner/tree/v1).
 
-### Installation
+## Features
 
-Install the plugin using npm or yarn:
+- Multi-section banners with drag-and-drop ordering
+- Translatable content (title, description, call-to-action)
+- Link sections to products, collections, or external URLs
+- Cover images via Vendure asset system
+- Shop API for storefront queries (by ID or name)
+- Custom permission for admin access control
+- React-based dashboard UI (Vendure 3.x Dashboard)
+
+## Requirements
+
+- Vendure `^3.0.0`
+- Node.js `>=22`
+
+## Installation
 
 ```bash
 npm install vendure-banner-plugin
 ```
 
-or
+For the v2 prerelease with the new React dashboard:
 
 ```bash
-yarn add vendure-banner-plugin
+npm install vendure-banner-plugin@next
 ```
 
-### Configuration
-
-Import and configure the plugin in your Vendure configuration:
+## Configuration
 
 ```typescript
 import { BannerPlugin } from 'vendure-banner-plugin';
@@ -28,72 +39,119 @@ import { BannerPlugin } from 'vendure-banner-plugin';
 export const config: VendureConfig = {
     plugins: [
         BannerPlugin,
-        AdminUiPlugin.init({
-            port: 3002,
-            route: 'admin',
-            app: compileUiExtensions({
-                outputPath: path.join(__dirname, '../admin-ui'),
-                extensions: [BannerPlugin.ui],
-            }),
-        }),
+        // ...other plugins
     ],
 };
 ```
 
-### Usage
+That's it — the dashboard UI registers automatically via the `dashboard` entry point. No `compileUiExtensions` or `AdminUiPlugin` setup needed.
 
-Once installed and configured, you can manage banners through the Vendure admin interface.
+## GraphQL API
 
-### GraphQL API
-
-Query banners using the following GraphQL query:
+### Shop API
 
 ```graphql
-query GetBanners {
-    banners {
+# Get a banner by name
+query GetBanner {
+    bannerByName(name: "homepage-hero") {
         id
         name
         enabled
         sections {
-            id
-            imageUrl
-            link
-            callToActionText
+            title
+            description
+            callToAction
+            externalLink
+            position
+            asset {
+                preview
+            }
+            product {
+                id
+                slug
+            }
+            collection {
+                id
+                slug
+            }
         }
     }
 }
 ```
 
+### Admin API
+
+```graphql
+# List all banners
+query ListBanners {
+    banners {
+        items {
+            id
+            name
+            enabled
+        }
+        totalItems
+    }
+}
+
+# Create a banner
+mutation CreateBanner {
+    createBanner(input: {
+        name: "homepage-hero"
+        enabled: true
+        sections: [{
+            position: 0
+            assetId: "1"
+            productId: "42"
+            translations: [{
+                languageCode: en
+                title: "Summer Sale"
+                description: "Up to 50% off"
+                callToAction: "Shop Now"
+            }]
+        }]
+    }) {
+        id
+    }
+}
+```
+
+## Migrating from v1
+
+v2 replaces the Angular admin UI with a React-based dashboard. The backend API is unchanged.
+
+| | v1 | v2 |
+|---|---|---|
+| Admin UI | Angular (`compileUiExtensions`) | React Dashboard (automatic) |
+| Vendure | 2.x – 3.x | 3.x |
+| i18n | JSON files | Lingui (`.po` files) |
+| Languages | English, Ukrainian | English, Ukrainian, Polish |
+
+To migrate, update the plugin and remove the `AdminUiPlugin` / `compileUiExtensions` setup — the dashboard UI is now registered automatically.
+
 ## Development
 
-### Setup
-
-1. Install dependencies:
-
 ```bash
+# Install dependencies
 npm install
-# or
-yarn install
-```
 
-2. Start development server:
-
-```bash
+# Start dev server
 npm run start
-# or
-yarn start
-```
 
-The development server will watch for changes and automatically recompile as needed.
+# Run e2e tests
+npm run e2e
 
-### Building for Production
+# Run unit tests
+npm run test:unit
 
-Build the plugin for production use:
+# Lint & format
+npm run lint
+npm run prettify
 
-```bash
+# Build for production
 npm run build
-# or
-yarn build
 ```
 
-This will create an optimized build ready for deployment.
+## License
+
+MIT
