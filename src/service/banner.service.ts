@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
     assertFound,
+    EventBus,
     ID,
     ListQueryBuilder,
     EntityNotFoundError,
@@ -14,6 +15,7 @@ import {
     Collection,
     TranslatableSaver,
 } from '@vendure/core';
+import { BannerEvent } from '../events/banner.event';
 import { Banner } from '../entities/banner.entity';
 import { BannerSection } from '../entities/banner-section.entity';
 import { BannerSectionTranslation } from '../entities/banner-section-translation.entity';
@@ -26,6 +28,7 @@ export class BannerService {
         private translator: TranslatorService,
         private listQueryBuilder: ListQueryBuilder,
         private translatableSaver: TranslatableSaver,
+        private eventBus: EventBus,
     ) {}
 
     async findByName(
@@ -105,7 +108,7 @@ export class BannerService {
         banner.sections = sections;
 
         const result = await this.connection.getRepository(ctx, Banner).save(banner);
-
+        this.eventBus.publish(new BannerEvent(ctx, result.id, 'created'));
         return assertFound(result as any);
     }
 
@@ -119,12 +122,17 @@ export class BannerService {
             sections: sectionToSave,
         });
 
+        this.eventBus.publish(new BannerEvent(ctx, input.id, 'updated'));
         const updatedBanner = this.findOne(ctx, input.id, relations, false);
         return assertFound(updatedBanner);
     }
 
     async delete(ctx: RequestContext, id: ID) {
-        return this.deleteEntity(Banner, ctx, id);
+        const result = await this.deleteEntity(Banner, ctx, id);
+        if (result) {
+            this.eventBus.publish(new BannerEvent(ctx, id, 'deleted'));
+        }
+        return result;
     }
 
     async deleteSection(ctx: RequestContext, id: ID) {
