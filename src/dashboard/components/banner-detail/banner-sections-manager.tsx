@@ -6,6 +6,17 @@ import { graphql } from '@/gql';
 import { BannerSection } from '../banner-section';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
 import { PlusIcon } from 'lucide-react';
+import {
+    DndContext,
+    closestCenter,
+    DragEndEvent,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
 const deleteBannerSectionDocument = graphql(`
     mutation DeleteBannerSection($input: DeleteBannerSectionInput!) {
@@ -22,12 +33,32 @@ type BannerSectionsManagerProps = {
 export function BannerSectionsManager({ form, expandedSections, languageCode }: BannerSectionsManagerProps) {
     const { t } = useLingui();
     const { control, watch } = form;
-    const { fields, append, remove } = useFieldArray({
+    const { fields, append, remove, move } = useFieldArray({
         control,
         name: 'sections',
     });
 
     const sections = watch('sections') || [];
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+    );
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (!over || active.id === over.id) return;
+
+        const oldIndex = fields.findIndex(f => f.id === active.id);
+        const newIndex = fields.findIndex(f => f.id === over.id);
+        move(oldIndex, newIndex);
+
+        // Update position values to match new order
+        const updatedSections = watch('sections');
+        updatedSections.forEach((_: any, i: number) => {
+            form.setValue(`sections.${i}.position`, i + 1, { shouldDirty: true });
+        });
+    };
 
     const addSection = () => {
         const maxPosition = sections.length > 0 ? Math.max(...sections.map((s: any) => s.position || 0)) : 0;
@@ -69,20 +100,30 @@ export function BannerSectionsManager({ form, expandedSections, languageCode }: 
                 </Button>
             </div>
 
-            {fields.map((field, index) => {
-                const section = sections[index];
-                const sectionId = section?.id;
+            <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                modifiers={[restrictToVerticalAxis]}
+                onDragEnd={handleDragEnd}
+            >
+                <SortableContext items={fields.map(f => f.id)} strategy={verticalListSortingStrategy}>
+                    {fields.map((field, index) => {
+                        const section = sections[index];
+                        const sectionId = section?.id;
 
-                return (
-                    <BannerSection
-                        key={field.id}
-                        sectionIndex={index}
-                        isExpanded={expandedSections}
-                        canDelete={index > 0 || !!sectionId}
-                        onDelete={() => deleteSection(index, sectionId)}
-                    />
-                );
-            })}
+                        return (
+                            <BannerSection
+                                key={field.id}
+                                sortableId={field.id}
+                                sectionIndex={index}
+                                isExpanded={expandedSections}
+                                canDelete={index > 0 || !!sectionId}
+                                onDelete={() => deleteSection(index, sectionId)}
+                            />
+                        );
+                    })}
+                </SortableContext>
+            </DndContext>
 
             {fields.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">

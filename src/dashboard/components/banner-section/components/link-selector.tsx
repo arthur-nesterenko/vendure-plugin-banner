@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormFieldWrapper, Input, api, cn } from '@vendure/dashboard';
 import { useQuery } from '@tanstack/react-query';

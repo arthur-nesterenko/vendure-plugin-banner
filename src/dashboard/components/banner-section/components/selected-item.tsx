@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button, VendureImage } from '@vendure/dashboard';
 import { XIcon } from 'lucide-react';
 

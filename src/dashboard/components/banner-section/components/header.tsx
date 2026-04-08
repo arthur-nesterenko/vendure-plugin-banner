@@ -1,6 +1,7 @@
+import React from 'react';
 import { Trans } from '@lingui/react/macro';
 import { Button, VendureImage, type Asset } from '@vendure/dashboard';
-import { ChevronDownIcon, ChevronUpIcon, ImageIcon } from 'lucide-react';
+import { ChevronDownIcon, ChevronUpIcon, GripVerticalIcon, ImageIcon } from 'lucide-react';
 
 interface SectionHeaderProps {
     handleToggle: () => void;
@@ -10,6 +11,7 @@ interface SectionHeaderProps {
     canDelete: boolean;
     onDelete?: () => void;
     isExpanded: boolean;
+    dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>;
 }
 
 export function SectionHeader({
@@ -20,6 +22,7 @@ export function SectionHeader({
     canDelete,
     onDelete,
     isExpanded,
+    dragHandleProps,
 }: SectionHeaderProps) {
     return (
         <div
@@ -27,6 +30,14 @@ export function SectionHeader({
             onClick={handleToggle}
         >
             <div className="flex items-center gap-3 flex-1 min-w-0">
+                <button
+                    type="button"
+                    className="cursor-grab active:cursor-grabbing touch-none text-muted-foreground hover:text-foreground flex-shrink-0"
+                    onClick={e => e.stopPropagation()}
+                    {...dragHandleProps}
+                >
+                    <GripVerticalIcon className="h-4 w-4" />
+                </button>
                 {selectedAsset ? (
                     <VendureImage
                         asset={selectedAsset}

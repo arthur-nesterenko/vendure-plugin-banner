@@ -1,4 +1,3 @@
-import React from 'react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Badge, Button, DetailPageButton, ListPage, PageActionBarRight } from '@vendure/dashboard';
 import type { DashboardRouteDefinition } from '@vendure/dashboard';

@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useFormContext, useFormState, useWatch } from 'react-hook-form';
 import { cn, type Asset } from '@vendure/dashboard';
 import { SectionHeader, CoverImage, ContentFields, LinkSelector } from './components';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface BannerSectionProps {
+    sortableId: string;
     sectionIndex: number;
     isExpanded?: boolean;
     onToggle?: () => void;
@@ -12,6 +15,7 @@ interface BannerSectionProps {
 }
 
 export function BannerSection({
+    sortableId,
     sectionIndex,
     isExpanded: initialExpanded = true,
     onToggle,
@@ -21,6 +25,10 @@ export function BannerSection({
     const { control, setValue } = useFormContext();
     const { errors } = useFormState({ control });
     const [isExpanded, setIsExpanded] = useState(initialExpanded);
+
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+        id: sortableId,
+    });
 
     const sectionPath = `sections.${sectionIndex}` as const;
     const translationPath = `${sectionPath}.translations.0` as const;
@@ -53,8 +61,21 @@ export function BannerSection({
         setValue(`${sectionPath}.${field}`, value, { shouldDirty: true });
     };
 
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
+
     return (
-        <div className={cn('rounded-lg border', hasErrors && 'border-destructive')}>
+        <div
+            ref={setNodeRef}
+            style={style}
+            className={cn(
+                'rounded-lg border',
+                hasErrors && 'border-destructive',
+                isDragging && 'opacity-50 z-10',
+            )}
+        >
             <SectionHeader
                 handleToggle={handleToggle}
                 selectedAsset={selectedAsset}
@@ -63,6 +84,7 @@ export function BannerSection({
                 canDelete={canDelete}
                 onDelete={onDelete}
                 isExpanded={isExpanded}
+                dragHandleProps={{ ...attributes, ...listeners }}
             />
 
             {isExpanded && (
