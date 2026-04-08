@@ -132,7 +132,7 @@ query {
 
 ## Events
 
-The plugin publishes a `BannerEvent` on Vendure's `EventBus` whenever a banner is created, updated, or deleted. Subscribe to it for cache invalidation, audit logs, search re-indexing, or any other side effect that needs to react to banner changes.
+The plugin publishes a `BannerEvent` on Vendure's `EventBus` whenever a banner is created, updated, or deleted. Subscribe to it for cache invalidation, audit logs, or any other side effect that needs to react to banner changes.
 
 ```typescript
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
