@@ -31,7 +31,7 @@
         "prepare": "husky",
         "lint": "eslint .",
         "prettify": "prettier --write . --html-whitespace-sensitivity ignore",
-        "lint:fix": "npm run lint --fix",
+        "lint:fix": "eslint . --fix",
         "commit": "git-cz",
         "e2e": "vitest run --project e2e",
         "e2e:watch": "vitest --project e2e --watch",
