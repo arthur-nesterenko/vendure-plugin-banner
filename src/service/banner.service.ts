@@ -21,8 +21,18 @@ import { BannerSection } from '../entities/banner-section.entity';
 import { BannerSectionTranslation } from '../entities/banner-section-translation.entity';
 import { BannerSectionInput, CreateBannerInput, UpdateBannerInput } from '../generated-admin-types';
 
+/**
+ * @description
+ * Service that manages {@link Banner} entities and their nested
+ * {@link BannerSection}s. Handles CRUD, translation persistence via
+ * `TranslatableSaver`, and publishes a {@link BannerEvent} on every
+ * mutating call so subscribers can react (e.g. cache invalidation).
+ *
+ * @category Services
+ */
 @Injectable()
 export class BannerService {
+    /** @internal */
     constructor(
         private connection: TransactionalConnection,
         private translator: TranslatorService,
@@ -31,6 +41,13 @@ export class BannerService {
         private eventBus: EventBus,
     ) {}
 
+    /**
+     * @description
+     * Looks up a single enabled banner by its unique `name`. Throws
+     * `EntityNotFoundError` when no enabled banner with that name
+     * exists. Sections are eagerly loaded along with their
+     * translations.
+     */
     async findByName(
         ctx: RequestContext,
         name: string,
@@ -50,6 +67,12 @@ export class BannerService {
         return assertFound(this.findOne(ctx, banner?.id, rlts));
     }
 
+    /**
+     * @description
+     * Returns a paginated list of banners. Each banner's sections are
+     * translated into the request's language and sorted by `position`
+     * before being returned.
+     */
     async findAll(
         ctx: RequestContext,
         options?: any,
@@ -73,6 +96,13 @@ export class BannerService {
         };
     }
 
+    /**
+     * @description
+     * Loads a single banner by id, translating and ordering its
+     * sections. Pass `onlyEnabled = false` to also resolve disabled
+     * banners — useful for the admin API where authors need to edit
+     * unpublished content.
+     */
     async findOne(
         ctx: RequestContext,
         id: ID,
@@ -97,6 +127,12 @@ export class BannerService {
         };
     }
 
+    /**
+     * @description
+     * Creates a new banner with its initial set of sections, persists
+     * everything in a single transaction, and publishes a
+     * `BannerEvent` of type `'created'`.
+     */
     async create(ctx: RequestContext, input: CreateBannerInput) {
         const { sections: inputSections = [], ...bannerInput } = input;
         const sections = await Promise.all(inputSections.map(s => this.createSection(ctx, s)));
@@ -112,6 +148,13 @@ export class BannerService {
         return assertFound(result as any);
     }
 
+    /**
+     * @description
+     * Updates an existing banner. Sections supplied without an `id`
+     * are created; sections with an `id` are upserted (both
+     * translatable and non-translatable fields). Publishes a
+     * `BannerEvent` of type `'updated'`.
+     */
     async update(ctx: RequestContext, input: UpdateBannerInput, relations?: RelationPaths<Banner>) {
         const { sections = [], ...banner } = input;
 
@@ -127,6 +170,13 @@ export class BannerService {
         return assertFound(updatedBanner);
     }
 
+    /**
+     * @description
+     * Deletes a banner and all of its sections via the cascading
+     * relation. Publishes a `BannerEvent` of type `'deleted'` when
+     * the row is actually removed. Returns `true` if a row was
+     * affected.
+     */
     async delete(ctx: RequestContext, id: ID) {
         const result = await this.deleteEntity(Banner, ctx, id);
         if (result) {
@@ -135,10 +185,16 @@ export class BannerService {
         return result;
     }
 
+    /**
+     * @description
+     * Deletes a single {@link BannerSection} from its parent banner.
+     * Returns `true` if a row was affected.
+     */
     async deleteSection(ctx: RequestContext, id: ID) {
         return this.deleteEntity(BannerSection, ctx, id);
     }
 
+    /** @internal */
     private upsertSection = async (ctx: RequestContext, input: BannerSectionInput) => {
         if (!input.id) {
             return this.createSection(ctx, input);
@@ -188,6 +244,7 @@ export class BannerService {
         return updatedSection;
     };
 
+    /** @internal */
     private createSectionWithoutTranslation = async (ctx: RequestContext, input: BannerSectionInput) => {
         const section = new BannerSection();
 
@@ -214,6 +271,7 @@ export class BannerService {
         return section;
     };
 
+    /** @internal */
     private createSection = async (ctx: RequestContext, input: BannerSectionInput) => {
         const section = await this.createSectionWithoutTranslation(ctx, input);
         const translations = [];
@@ -228,6 +286,7 @@ export class BannerService {
         return section;
     };
 
+    /** @internal */
     private deleteEntity = async (
         entity: Parameters<typeof TransactionalConnection.prototype.getRepository>[1],
         ctx: RequestContext,

@@ -5,6 +5,14 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 import { BannerSection } from './banner-section.entity';
 import { Translation, VendureEntity } from '@vendure/core';
 
+/**
+ * @description
+ * Per-language translation of a {@link BannerSection}'s text fields:
+ * `title`, `description`, and `callToAction`. One row exists per
+ * supported `LanguageCode`.
+ *
+ * @category Entities
+ */
 @Entity()
 export class BannerSectionTranslation extends VendureEntity implements Translation<BannerSection> {
     constructor(input?: DeepPartial<BannerSectionTranslation>) {

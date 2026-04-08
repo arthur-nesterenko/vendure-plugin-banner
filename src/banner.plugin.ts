@@ -8,6 +8,32 @@ import { BannerSection } from './entities/banner-section.entity';
 import { BannerSectionTranslation } from './entities/banner-section-translation.entity';
 import { BannerPermission } from './banner-permissions';
 
+/**
+ * @description
+ * The `BannerPlugin` adds dynamic promotional banners to a Vendure store.
+ * Each banner is composed of one or more sections that can hold a cover
+ * image, translatable content, and a link to a product, collection, or
+ * external URL. Sections can be reordered via drag-and-drop in the
+ * dashboard.
+ *
+ * The plugin auto-registers a React-based extension for the Vendure
+ * Dashboard — no `compileUiExtensions` or `AdminUiPlugin` setup is
+ * required.
+ *
+ * @example
+ * ```ts
+ * import { BannerPlugin } from 'vendure-banner-plugin';
+ *
+ * export const config: VendureConfig = {
+ *     plugins: [
+ *         BannerPlugin,
+ *         // ...other plugins
+ *     ],
+ * };
+ * ```
+ *
+ * @category Plugin
+ */
 @VendurePlugin({
     imports: [PluginCommonModule],
     entities: [Banner, BannerSection, BannerSectionTranslation],
