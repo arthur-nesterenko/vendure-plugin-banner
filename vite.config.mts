@@ -3,6 +3,15 @@ import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { defineConfig } from 'vite';
 
+// The dashboard config lives in dev-server/ but imports from ../src/.
+// We need the compiler's sourceRoot to be the project root so that both
+// dev-server/ and src/ are mirrored into the temp output directory and
+// the relative require("../src") in the compiled config resolves
+// correctly back into our plugin sources.
+const projectRoot = __dirname;
+const configRelativePath = 'dev-server/vendure-config.ts';
+const configDirRelativeToRoot = 'dev-server';
+
 export default defineConfig({
     base: '/dashboard',
     build: {
@@ -14,7 +23,7 @@ export default defineConfig({
             // to find any plugins which have dashboard extensions, as well as
             // to introspect the GraphQL schema based on any API extensions
             // and custom fields that are configured.
-            vendureConfigPath: pathToFileURL('./dev-server/vendure-config.ts'),
+            vendureConfigPath: pathToFileURL(configRelativePath),
             // Points to the location of your Vendure server.
             api: { host: 'http://localhost', port: 4000 },
             // When you start the Vite server, your Admin API schema will
@@ -23,18 +32,9 @@ export default defineConfig({
             // type safety when writing queries and mutations.
             gqlOutputPath: './src/gql',
             pathAdapter: {
-                getCompiledConfigPath: ({ inputRootDir, outputPath, configFileName }) => {
-                    // Preserve the directory structure relative to project root
-                    // If config is in dev-server/, preserve that in the output path
-                    const projectRoot = __dirname;
-                    const relativePath = inputRootDir.replace(projectRoot, '').replace(/^[/\\]/, '');
-                    const jsFileName = configFileName.replace('.ts', '.js');
-
-                    if (relativePath) {
-                        return join(outputPath, relativePath, jsFileName);
-                    }
-                    return join(outputPath, jsFileName);
-                },
+                sourceRoot: projectRoot,
+                getCompiledConfigPath: ({ outputPath, configFileName }) =>
+                    join(outputPath, configDirRelativeToRoot, configFileName.replace(/\.ts$/, '.js')),
             },
         }),
     ],
