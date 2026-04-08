@@ -19,11 +19,13 @@ A plugin for [Vendure](https://www.vendure.io/) that adds dynamic promotional ba
 ## Features
 
 - **Multi-section banners** — each banner supports multiple sections with independent content and ordering
+- **Drag-and-drop reordering** — sort sections directly in the dashboard
 - **Translatable content** — title, description, and call-to-action text per language (English, Ukrainian, Polish)
 - **Flexible linking** — link each section to a product, collection, or external URL
 - **Cover images** — attach images from the Vendure asset system
 - **Shop API** — query banners by ID or name for your storefront
-- **Access control** — dedicated permission for banner management in the admin
+- **Event bus integration** — `BannerEvent` fires on create/update/delete for cache invalidation and side effects
+- **Access control** — dedicated CRUD permissions for banner management in the admin
 
 ## Requirements
 
@@ -64,6 +66,17 @@ npx vendure migrate
 ### 4. Manage banners
 
 Open the Vendure dashboard. You'll find a **Banners** section in the navigation where you can create, edit, and organize your banners.
+
+## Permissions
+
+The plugin registers a CRUD permission set for banner management:
+
+- `CreateBanner`
+- `ReadBanner`
+- `UpdateBanner`
+- `DeleteBanner`
+
+Grant these to any admin role that should manage banners via **Settings → Roles** in the dashboard.
 
 ## Querying Banners (Shop API)
 
@@ -116,6 +129,32 @@ query {
     }
 }
 ```
+
+## Events
+
+The plugin publishes a `BannerEvent` on Vendure's `EventBus` whenever a banner is created, updated, or deleted. Subscribe to it for cache invalidation, audit logs, search re-indexing, or any other side effect that needs to react to banner changes.
+
+```typescript
+import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { EventBus } from '@vendure/core';
+import { BannerEvent } from 'vendure-banner-plugin';
+
+@Injectable()
+export class BannerCacheInvalidator implements OnApplicationBootstrap {
+    constructor(private eventBus: EventBus) {}
+
+    onApplicationBootstrap() {
+        this.eventBus.ofType(BannerEvent).subscribe(event => {
+            // event.bannerId — ID of the affected banner
+            // event.type    — 'created' | 'updated' | 'deleted'
+            // event.ctx     — RequestContext
+            console.log(`Banner ${event.bannerId} was ${event.type}`);
+        });
+    }
+}
+```
+
+A real-world use case: invalidating an [Stellate](https://stellate.co/) edge cache for the storefront whenever banners change, so customers always see fresh content without sacrificing CDN performance.
 
 ## Migrating from v1 to v2
 
