@@ -4,5 +4,5 @@ import path from 'node:path';
 const src = path.join(__dirname, '../src/dashboard');
 const dest = path.join(__dirname, '../dist/dashboard');
 copySync(src, dest, {
-    filter: (filePath) => !filePath.includes('.spec.') && !filePath.endsWith('/test'),
+    filter: filePath => !filePath.includes('.spec.') && !filePath.endsWith('/test'),
 });

@@ -1,6 +1,7 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import eslintConfigPrettier from 'eslint-plugin-prettier/recommended';
+import globals from 'globals';
 
 export default [
     {
@@ -22,8 +23,8 @@ export default [
             ecmaVersion: 2020,
             sourceType: 'module',
             globals: {
-                __dirname: true,
-                console: true,
+                ...globals.node,
+                ...globals.browser,
             },
         },
         rules: {
