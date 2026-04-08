@@ -78,11 +78,13 @@ export type Asset = Node & {
   focalPoint?: Maybe<Coordinate>;
   height: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
+  languageCode: LanguageCode;
   mimeType: Scalars['String']['output'];
   name: Scalars['String']['output'];
   preview: Scalars['String']['output'];
   source: Scalars['String']['output'];
   tags: Array<Tag>;
+  translations: Array<AssetTranslation>;
   type: AssetType;
   updatedAt: Scalars['DateTime']['output'];
   width: Scalars['Int']['output'];
@@ -92,6 +94,15 @@ export type AssetList = PaginatedList & {
   __typename?: 'AssetList';
   items: Array<Asset>;
   totalItems: Scalars['Int']['output'];
+};
+
+export type AssetTranslation = {
+  __typename?: 'AssetTranslation';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  languageCode: LanguageCode;
+  name: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export enum AssetType {
@@ -1297,6 +1308,7 @@ export enum HistoryEntryType {
   ORDER_CANCELLATION = 'ORDER_CANCELLATION',
   ORDER_COUPON_APPLIED = 'ORDER_COUPON_APPLIED',
   ORDER_COUPON_REMOVED = 'ORDER_COUPON_REMOVED',
+  ORDER_CURRENCY_UPDATED = 'ORDER_CURRENCY_UPDATED',
   ORDER_CUSTOMER_UPDATED = 'ORDER_CUSTOMER_UPDATED',
   ORDER_FULFILLMENT = 'ORDER_FULFILLMENT',
   ORDER_FULFILLMENT_TRANSITION = 'ORDER_FULFILLMENT_TRANSITION',
@@ -1846,6 +1858,8 @@ export type Mutation = {
   requestUpdateCustomerEmailAddress: RequestUpdateCustomerEmailAddressResult;
   /** Resets a Customer's password based on the provided token */
   resetPassword: ResetPasswordResult;
+  /** Sets the currency code for the active Order */
+  setCurrencyCodeForOrder: UpdateOrderItemsResult;
   /** Set the Customer for the Order. Required only if the Customer is not currently logged in */
   setCustomerForOrder: SetCustomerForOrderResult;
   /** Sets the billing address for the active Order */
@@ -1972,6 +1986,11 @@ export type MutationRequestUpdateCustomerEmailAddressArgs = {
 export type MutationResetPasswordArgs = {
   password: Scalars['String']['input'];
   token: Scalars['String']['input'];
+};
+
+
+export type MutationSetCurrencyCodeForOrderArgs = {
+  currencyCode: CurrencyCode;
 };
 
 
@@ -2513,6 +2532,8 @@ export enum Permission {
   Authenticated = 'Authenticated',
   /** Grants permission to create Administrator */
   CreateAdministrator = 'CreateAdministrator',
+  /** Grants permission to create ApiKey */
+  CreateApiKey = 'CreateApiKey',
   /** Grants permission to create Asset */
   CreateAsset = 'CreateAsset',
   /** Grants permission to create Banner */
@@ -2559,6 +2580,8 @@ export enum Permission {
   CreateZone = 'CreateZone',
   /** Grants permission to delete Administrator */
   DeleteAdministrator = 'DeleteAdministrator',
+  /** Grants permission to delete ApiKey */
+  DeleteApiKey = 'DeleteApiKey',
   /** Grants permission to delete Asset */
   DeleteAsset = 'DeleteAsset',
   /** Grants permission to delete Banner */
@@ -2609,6 +2632,8 @@ export enum Permission {
   Public = 'Public',
   /** Grants permission to read Administrator */
   ReadAdministrator = 'ReadAdministrator',
+  /** Grants permission to read ApiKey */
+  ReadApiKey = 'ReadApiKey',
   /** Grants permission to read Asset */
   ReadAsset = 'ReadAsset',
   /** Grants permission to read Banner */
@@ -2657,6 +2682,8 @@ export enum Permission {
   SuperAdmin = 'SuperAdmin',
   /** Grants permission to update Administrator */
   UpdateAdministrator = 'UpdateAdministrator',
+  /** Grants permission to update ApiKey */
+  UpdateApiKey = 'UpdateApiKey',
   /** Grants permission to update Asset */
   UpdateAsset = 'UpdateAsset',
   /** Grants permission to update Banner */
@@ -2795,6 +2822,8 @@ export type ProductOptionGroup = Node & {
   languageCode: LanguageCode;
   name: Scalars['String']['output'];
   options: Array<ProductOption>;
+  /** The number of products that use this option group */
+  productCount: Scalars['Int']['output'];
   translations: Array<ProductOptionGroupTranslation>;
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -3216,7 +3245,9 @@ export type RoleList = PaginatedList & {
 
 export type SearchInput = {
   collectionId?: InputMaybe<Scalars['ID']['input']>;
+  collectionIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   collectionSlug?: InputMaybe<Scalars['String']['input']>;
+  collectionSlugs?: InputMaybe<Array<Scalars['String']['input']>>;
   facetValueFilters?: InputMaybe<Array<FacetValueFilterInput>>;
   /** @deprecated Use `facetValueFilters` instead */
   facetValueIds?: InputMaybe<Array<Scalars['ID']['input']>>;
