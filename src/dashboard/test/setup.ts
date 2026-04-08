@@ -43,7 +43,7 @@ vi.mock('@vendure/dashboard', () => ({
         ),
     ListPage: () => null,
     DetailPageButton: () => null,
-    PageActionBarRight: ({ children }: any) => React.createElement('div', null, children),
+    ActionBarItem: ({ children }: any) => React.createElement('div', null, children),
     AssetPickerDialog: () => null,
     cn: (...args: any[]) => args.filter(Boolean).join(' '),
 }));

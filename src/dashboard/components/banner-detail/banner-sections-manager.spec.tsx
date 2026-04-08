@@ -2,14 +2,20 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BannerSectionsManager } from './banner-sections-manager';
 
 function TestWrapper({ defaultSections = [] }: { defaultSections?: any[] }) {
     const form = useForm({ defaultValues: { sections: defaultSections } });
+    // Newly added sections render expanded by default, which mounts LinkSelector
+    // and its useQuery hook — so we need a QueryClient in the tree.
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     return (
-        <FormProvider {...form}>
-            <BannerSectionsManager form={form} expandedSections={false} languageCode="en" />
-        </FormProvider>
+        <QueryClientProvider client={queryClient}>
+            <FormProvider {...form}>
+                <BannerSectionsManager form={form} languageCode="en" />
+            </FormProvider>
+        </QueryClientProvider>
     );
 }
 

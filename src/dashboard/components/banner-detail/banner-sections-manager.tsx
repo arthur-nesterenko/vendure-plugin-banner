@@ -26,11 +26,10 @@ const deleteBannerSectionDocument = graphql(`
 
 type BannerSectionsManagerProps = {
     form: UseFormReturn<any>;
-    expandedSections: boolean;
     languageCode: string;
 };
 
-export function BannerSectionsManager({ form, expandedSections, languageCode }: BannerSectionsManagerProps) {
+export function BannerSectionsManager({ form, languageCode }: BannerSectionsManagerProps) {
     const { t } = useLingui();
     const { control, watch } = form;
     const { fields, append, remove, move } = useFieldArray({
@@ -110,13 +109,20 @@ export function BannerSectionsManager({ form, expandedSections, languageCode }: 
                     {fields.map((field, index) => {
                         const section = sections[index];
                         const sectionId = section?.id;
+                        // Sections loaded from the server (have an id) start collapsed
+                        // so a banner with many sections does not blow up the page on
+                        // open. Newly added sections — including the auto-created
+                        // first section in create mode and any section added via the
+                        // "Add Section" button — start expanded so the user can fill
+                        // them in immediately.
+                        const isExpanded = !sectionId;
 
                         return (
                             <BannerSection
                                 key={field.id}
                                 sortableId={field.id}
                                 sectionIndex={index}
-                                isExpanded={expandedSections}
+                                isExpanded={isExpanded}
                                 canDelete={index > 0 || !!sectionId}
                                 onDelete={() => deleteSection(index, sectionId)}
                             />

@@ -1,12 +1,12 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
+    ActionBarItem,
     Button,
     DetailFormGrid,
     FormFieldWrapper,
     Input,
     Page,
     PageActionBar,
-    PageActionBarRight,
     PageBlock,
     PageLayout,
     PageTitle,
@@ -73,7 +73,6 @@ function BannerDetailPage({ route }: { route: AnyRoute }) {
     const params = route.useParams();
     const navigate = useNavigate();
     const creatingNewEntity = params.id === 'new';
-    const expandedSections = !creatingNewEntity;
 
     /**
      * TODO: Get the default language code from the channel
@@ -160,11 +159,11 @@ function BannerDetailPage({ route }: { route: AnyRoute }) {
         <Page pageId="banner-detail" form={form} submitHandler={submitHandler}>
             <PageTitle>{creatingNewEntity ? <Trans>New Banner</Trans> : entity?.name || ''}</PageTitle>
             <PageActionBar>
-                <PageActionBarRight>
+                <ActionBarItem itemId="save-banner">
                     <Button type="submit" disabled={!isDirty || !isValid || isPending}>
                         {creatingNewEntity ? <Trans>Create</Trans> : <Trans>Update</Trans>}
                     </Button>
-                </PageActionBarRight>
+                </ActionBarItem>
             </PageActionBar>
             <PageLayout>
                 <PageBlock column="main" blockId="main-form">
@@ -186,11 +185,7 @@ function BannerDetailPage({ route }: { route: AnyRoute }) {
                     </DetailFormGrid>
                 </PageBlock>
                 <PageBlock column="main" blockId="sections">
-                    <BannerSectionsManager
-                        languageCode={languageCode}
-                        form={form}
-                        expandedSections={expandedSections}
-                    />
+                    <BannerSectionsManager languageCode={languageCode} form={form} />
                 </PageBlock>
             </PageLayout>
         </Page>
