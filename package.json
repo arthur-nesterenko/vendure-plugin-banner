@@ -16,7 +16,9 @@
     "types": "dist/index.d.ts",
     "files": [
         "dist",
-        "README.md"
+        "README.md",
+        "CHANGELOG.md",
+        "LICENSE"
     ],
     "scripts": {
         "run:server": "ts-node ./dev-server/index.ts",
