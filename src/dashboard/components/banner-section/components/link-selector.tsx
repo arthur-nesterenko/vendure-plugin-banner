@@ -14,6 +14,7 @@ const searchProductsDocument = graphql(`
                 productId
                 productName
                 productAsset {
+                    id
                     preview
                 }
             }
@@ -28,6 +29,7 @@ const getCollectionsDocument = graphql(`
                 id
                 name
                 featuredAsset {
+                    id
                     preview
                 }
             }
@@ -41,6 +43,7 @@ const getProductByIdDocument = graphql(`
             id
             name
             featuredAsset {
+                id
                 preview
             }
         }
@@ -53,6 +56,7 @@ const getCollectionByIdDocument = graphql(`
             id
             name
             featuredAsset {
+                id
                 preview
             }
         }
@@ -161,7 +165,7 @@ export function LinkSelector({
                         type="button"
                         onClick={() => handleLinkTypeChange(value)}
                         className={cn(
-                            'px-3 py-1.5 text-sm rounded-md transition-colors',
+                            'px-3 py-1.5 text-sm rounded-md transition-colors cursor-pointer',
                             linkType === value
                                 ? 'bg-background shadow-sm font-medium'
                                 : 'text-muted-foreground hover:text-foreground',

@@ -93,7 +93,7 @@ export function BannerSectionsManager({ form, languageCode }: BannerSectionsMana
                 <h3 className="text-lg font-semibold">
                     <Trans>Sections</Trans>
                 </h3>
-                <Button type="button" variant="outline" onClick={addSection}>
+                <Button type="button" variant="outline" className="cursor-pointer" onClick={addSection}>
                     <PlusIcon className="mr-2 h-4 w-4" />
                     <Trans>Add Section</Trans>
                 </Button>

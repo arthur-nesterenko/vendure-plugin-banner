@@ -1,10 +1,10 @@
 import { Trans } from '@lingui/react/macro';
-import { VendureImage, type Asset } from '@vendure/dashboard';
+import { VendureImage } from '@vendure/dashboard';
 
 export interface SearchResultItem {
     id: string;
     name: string;
-    image?: Asset | null;
+    image?: { id: string; preview: string } | null;
 }
 
 interface SearchResultsProps {

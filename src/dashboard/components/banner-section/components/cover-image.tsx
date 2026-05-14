@@ -36,11 +36,12 @@ export function CoverImage({ selectedAsset, error, onAssetSelected, onAssetRemov
                                 type="button"
                                 variant="outline"
                                 size="sm"
+                                className="cursor-pointer"
                                 onClick={() => setPickerOpen(true)}
                             >
                                 <Trans>Change</Trans>
                             </Button>
-                            <Button type="button" variant="outline" size="sm" onClick={onAssetRemoved}>
+                            <Button type="button" variant="outline" size="sm" onClick={onAssetRemoved} className="cursor-pointer">
                                 <XIcon className="h-3 w-3" />
                             </Button>
                         </div>
@@ -75,12 +76,7 @@ export function CoverImage({ selectedAsset, error, onAssetSelected, onAssetRemov
                 onClose={() => setPickerOpen(false)}
                 onSelect={assets => {
                     if (assets.length > 0) {
-                        const asset = assets[0];
-                        onAssetSelected({
-                            id: asset.id,
-                            preview: asset.preview,
-                            name: asset.name,
-                        });
+                        onAssetSelected(assets[0]);
                     }
                 }}
                 initialSelectedAssets={selectedAsset ? [selectedAsset] : []}

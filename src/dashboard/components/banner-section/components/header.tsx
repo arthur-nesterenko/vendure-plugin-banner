@@ -69,7 +69,7 @@ export function SectionHeader({
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="text-destructive hover:text-destructive"
+                        className="text-destructive hover:text-destructive cursor-pointer"
                         onClick={e => {
                             e.stopPropagation();
                             onDelete?.();

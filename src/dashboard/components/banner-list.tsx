@@ -1,7 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ActionBarItem, Badge, Button, DetailPageButton, ListPage } from '@vendure/dashboard';
 import type { DashboardRouteDefinition } from '@vendure/dashboard';
-import { Link } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { PlusIcon } from 'lucide-react';
 import { graphql } from '@/gql';
 import { bannerFragment } from '../types/fragments';
@@ -42,6 +42,7 @@ export const bannerList: DashboardRouteDefinition = {
 
 function BannerListPage({ route }: { route: any }) {
     const { t } = useLingui();
+    const navigate = useNavigate();
     return (
         <ListPage
             pageId="banner-list"
@@ -82,11 +83,14 @@ function BannerListPage({ route }: { route: any }) {
             defaultColumnOrder={['name', 'sections', 'enabled']}
         >
             <ActionBarItem itemId="create-banner">
-                <Button asChild>
-                    <Link to="./new">
-                        <PlusIcon className="mr-2 h-4 w-4" />
-                        <Trans>Create Banner</Trans>
-                    </Link>
+                <Button
+                className="cursor-pointer"
+                    onClick={() =>
+                        navigate({ to: '/banners/$id', params: { id: 'new' } } as any)
+                    }
+                >
+                    <PlusIcon className="mr-2 h-4 w-4" />
+                    <Trans>Create Banner</Trans>
                 </Button>
             </ActionBarItem>
         </ListPage>
