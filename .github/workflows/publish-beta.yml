@@ -1,0 +1,64 @@
+name: Publish Beta
+
+concurrency:
+    group: beta-publish-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
+
+on:
+    pull_request:
+        types: [labeled, synchronize]
+        branches:
+            - main
+
+permissions:
+    pull-requests: write
+
+jobs:
+    beta:
+        if: >-
+            contains(github.event.pull_request.labels.*.name, 'beta') &&
+            github.event.pull_request.head.repo.full_name == github.repository
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  registry-url: 'https://registry.npmjs.org'
+                  cache: 'npm'
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Install sharp for Linux
+              run: npm install --os=linux --cpu=x64 sharp
+
+            - name: Set prerelease version
+              run: |
+                  BASE_VERSION=$(node -p "require('./package.json').version")
+                  PRERELEASE_VERSION="${BASE_VERSION}-beta.${{ github.run_number }}"
+                  npm version "$PRERELEASE_VERSION" --no-git-tag-version
+                  echo "VERSION=$PRERELEASE_VERSION" >> "$GITHUB_ENV"
+                  echo "Publishing version: $PRERELEASE_VERSION"
+
+            - name: Build
+              run: npm run build
+
+            - name: Publish to npm
+              run: npm publish --tag next
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Comment on PR
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      github.rest.issues.createComment({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        body: `📦 Published \`vendure-banner-plugin@${process.env.VERSION}\`\n\nInstall with:\n\`\`\`\nnpm install vendure-banner-plugin@next\n\`\`\``
+                      })

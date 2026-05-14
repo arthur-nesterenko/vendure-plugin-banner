@@ -1,9 +1,8 @@
 name: NPM Publish
 
 on:
-    push:
-        branches:
-            - main
+    release:
+        types: [published]
 
 jobs:
     publish:
@@ -17,13 +16,16 @@ jobs:
               with:
                   node-version: 22
                   registry-url: 'https://registry.npmjs.org'
-                  cache: 'yarn'
+                  cache: 'npm'
 
             - name: Install dependencies
-              run: yarn install --frozen-lockfile
+              run: npm ci
+
+            - name: Install sharp for Linux
+              run: npm install --os=linux --cpu=x64 sharp
 
             - name: Build
-              run: yarn build
+              run: npm run build
 
             - name: Publish to npm
               run: npm publish

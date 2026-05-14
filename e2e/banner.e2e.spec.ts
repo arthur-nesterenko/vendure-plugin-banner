@@ -15,19 +15,12 @@ import {
     CREATE_BANNER,
     UPDATE_BANNER,
     GET_BANNER,
+    DELETE_BANNER,
     DELETE_BANNER_SECTION,
-} from '../src/ui/banner-detail/banner-detail.graphql';
-import { DELETE_BANNER } from '../src/ui/banner-list/banner-list.graphql';
-import {
-    CreateBannerMutation,
-    CreateBannerInput,
-    DeleteBannerMutation,
-    UpdateBannerMutation,
-    DeleteBannerSectionMutation,
-    BannerSectionFragment,
-    BannerSectionInput,
-} from '../src/ui/generated-types';
-import { getAssetListDocument, getBannerByNameDocument } from './graphql';
+    GET_ASSET_LIST,
+} from './graphql/admin-queries';
+import { GET_BANNER_BY_NAME, GET_BANNER_SHOP } from './graphql/shop-queries';
+import { CreateBannerInput, BannerSectionInput } from '../src/generated-admin-types';
 
 const sqliteDataDir = path.join(__dirname, '__data__');
 
@@ -37,7 +30,7 @@ let shopClient: SimpleGraphQLClient;
 let serverStarted = false;
 
 const getAssets = async () => {
-    const result = await adminClient.query(getAssetListDocument);
+    const result = await adminClient.query(GET_ASSET_LIST);
     return result.assets.items;
 };
 
@@ -64,7 +57,7 @@ const generateBannerSections = (assetId: string, count = 1) => {
 };
 
 const convertToBannerSectionInput = (
-    sections: BannerSectionFragment[],
+    sections: Array<Record<string, any>>,
     extraSections: BannerSectionInput[] = [],
 ): BannerSectionInput[] => {
     return sections
@@ -92,7 +85,7 @@ const createBanner = async ({
         enabled: true,
         sections: generateBannerSections(asset.id),
     };
-    const result = await adminClient.query<CreateBannerMutation>(CREATE_BANNER, {
+    const result = await adminClient.query(CREATE_BANNER, {
         input: input ?? payload,
     });
 
@@ -150,7 +143,7 @@ describe('Banner Admin API', () => {
         expect(result.id).toBeDefined();
         expect(result.name).toBe('Test Banner to Delete');
         expect(result.sections?.length).toBe(1);
-        const deleteResult = await adminClient.query<DeleteBannerMutation>(DELETE_BANNER, {
+        const deleteResult = await adminClient.query(DELETE_BANNER, {
             input: {
                 id: result.id,
             },
@@ -165,7 +158,7 @@ describe('Banner Admin API', () => {
 
         expect(result.name).toBe('Test Banner to Update');
         expect(result.enabled).toBe(true);
-        const updateResult = await adminClient.query<UpdateBannerMutation>(UPDATE_BANNER, {
+        const updateResult = await adminClient.query(UPDATE_BANNER, {
             input: {
                 id: result.id,
                 name: 'Updated Test Banner',
@@ -268,7 +261,7 @@ describe('Banner Admin API', () => {
             };
 
             const newSections = convertToBannerSectionInput(result.sections ?? [], [newSection]);
-            const updateResult = await adminClient.query<UpdateBannerMutation>(UPDATE_BANNER, {
+            const updateResult = await adminClient.query(UPDATE_BANNER, {
                 input: {
                     id: result.id,
                     sections: newSections,
@@ -307,7 +300,7 @@ describe('Banner Admin API', () => {
                 },
             ]);
 
-            const updateResult = await adminClient.query<UpdateBannerMutation>(UPDATE_BANNER, {
+            const updateResult = await adminClient.query(UPDATE_BANNER, {
                 input: {
                     id: result.id,
                     sections: updatedSections,
@@ -317,6 +310,251 @@ describe('Banner Admin API', () => {
             expect(updateResult.updateBanner.sections).toHaveLength(sections.length);
             expect(updateResult.updateBanner.sections?.[0]?.externalLink).toBe('https://updated-link.com');
             expect(updateResult.updateBanner.sections?.[0]?.translations?.[0]?.title).toBe('Updated Title');
+        });
+
+        it('should update non-translatable fields on existing section', async () => {
+            const [asset] = await getAssets();
+            const result = await createBanner({
+                input: {
+                    name: 'Update Non-Translatable Banner',
+                    enabled: true,
+                    sections: generateBannerSections(asset.id, 1),
+                },
+            });
+
+            const section = result.sections[0];
+            expect(section.externalLink).toBe('https://section1.com');
+
+            // Update only the externalLink and position on the existing section
+            const updateResult = await adminClient.query(UPDATE_BANNER, {
+                input: {
+                    id: result.id,
+                    sections: [
+                        {
+                            id: section.id,
+                            assetId: section.asset?.id,
+                            externalLink: 'https://updated-link.com',
+                            position: 99,
+                            translations: section.translations.map((t: any) => ({
+                                id: t.id,
+                                languageCode: t.languageCode,
+                                title: t.title,
+                                description: t.description,
+                                callToAction: t.callToAction,
+                            })),
+                        },
+                    ],
+                },
+            });
+
+            const updatedSection = updateResult.updateBanner.sections[0];
+            // These assertions will FAIL before the fix:
+            expect(updatedSection.externalLink).toBe('https://updated-link.com');
+            expect(updatedSection.position).toBe(99);
+        });
+
+        it('should update product link on an existing section', async () => {
+            const [asset] = await getAssets();
+            const result = await createBanner({
+                input: {
+                    name: 'Update Product Link Banner',
+                    enabled: true,
+                    sections: [
+                        {
+                            assetId: asset.id,
+                            externalLink: 'https://example.com',
+                            position: 1,
+                            translations: [
+                                {
+                                    languageCode: LanguageCode.en,
+                                    title: 'Section',
+                                    description: 'Desc',
+                                    callToAction: 'CTA',
+                                },
+                            ],
+                        },
+                    ],
+                },
+            });
+
+            const section = result.sections[0];
+            expect(section.product).toBeNull();
+
+            const updateResult = await adminClient.query(UPDATE_BANNER, {
+                input: {
+                    id: result.id,
+                    sections: [
+                        {
+                            id: section.id,
+                            assetId: section.asset?.id,
+                            productId: 'T_1',
+                            externalLink: null,
+                            position: section.position,
+                            translations: section.translations.map((t: any) => ({
+                                id: t.id,
+                                languageCode: t.languageCode,
+                                title: t.title,
+                                description: t.description,
+                                callToAction: t.callToAction,
+                            })),
+                        },
+                    ],
+                },
+            });
+
+            expect(updateResult.updateBanner.sections[0].product).toBeDefined();
+            expect(updateResult.updateBanner.sections[0].product?.id).toBe('T_1');
+            expect(updateResult.updateBanner.sections[0].externalLink).toBeNull();
+        });
+
+        it('should preserve asset when updating other fields on existing section', async () => {
+            const [asset] = await getAssets();
+
+            const result = await createBanner({
+                input: {
+                    name: 'Preserve Asset Banner',
+                    enabled: true,
+                    sections: [
+                        {
+                            assetId: asset.id,
+                            externalLink: 'https://example.com',
+                            position: 1,
+                            translations: [
+                                {
+                                    languageCode: LanguageCode.en,
+                                    title: 'Section',
+                                    description: 'Desc',
+                                    callToAction: 'CTA',
+                                },
+                            ],
+                        },
+                    ],
+                },
+            });
+
+            const section = result.sections[0];
+            expect(section.asset?.id).toBe(asset.id);
+
+            // Update externalLink but keep the same asset
+            const updateResult = await adminClient.query(UPDATE_BANNER, {
+                input: {
+                    id: result.id,
+                    sections: [
+                        {
+                            id: section.id,
+                            assetId: asset.id,
+                            externalLink: 'https://updated-example.com',
+                            position: section.position,
+                            translations: section.translations.map((t: any) => ({
+                                id: t.id,
+                                languageCode: t.languageCode,
+                                title: t.title,
+                                description: t.description,
+                                callToAction: t.callToAction,
+                            })),
+                        },
+                    ],
+                },
+            });
+
+            expect(updateResult.updateBanner.sections[0].asset?.id).toBe(asset.id);
+            expect(updateResult.updateBanner.sections[0].externalLink).toBe('https://updated-example.com');
+        });
+
+        it('should update only translations on an existing section', async () => {
+            const [asset] = await getAssets();
+            const result = await createBanner({
+                input: {
+                    name: 'Update Translations Banner',
+                    enabled: true,
+                    sections: generateBannerSections(asset.id, 1),
+                },
+            });
+
+            const section = result.sections[0];
+            const updateResult = await adminClient.query(UPDATE_BANNER, {
+                input: {
+                    id: result.id,
+                    sections: [
+                        {
+                            id: section.id,
+                            assetId: section.asset?.id,
+                            externalLink: section.externalLink,
+                            position: section.position,
+                            translations: [
+                                {
+                                    id: section.translations[0].id,
+                                    languageCode: LanguageCode.en,
+                                    title: 'Updated EN Title',
+                                    description: 'Updated EN Desc',
+                                    callToAction: 'Updated EN CTA',
+                                },
+                            ],
+                        },
+                    ],
+                },
+            });
+
+            const updatedSection = updateResult.updateBanner.sections[0];
+            expect(updatedSection.translations[0].title).toBe('Updated EN Title');
+            expect(updatedSection.translations[0].description).toBe('Updated EN Desc');
+            expect(updatedSection.translations[0].callToAction).toBe('Updated EN CTA');
+            // Non-translatable fields should remain unchanged
+            expect(updatedSection.externalLink).toBe(section.externalLink);
+            expect(updatedSection.asset?.id).toBe(section.asset?.id);
+        });
+
+        it('should handle mixed create and update sections in one mutation', async () => {
+            const [asset] = await getAssets();
+            const result = await createBanner({
+                input: {
+                    name: 'Mixed Sections Banner',
+                    enabled: true,
+                    sections: generateBannerSections(asset.id, 1),
+                },
+            });
+
+            expect(result.sections).toHaveLength(1);
+            const existingSection = result.sections[0];
+
+            const updateResult = await adminClient.query(UPDATE_BANNER, {
+                input: {
+                    id: result.id,
+                    sections: [
+                        {
+                            id: existingSection.id,
+                            assetId: existingSection.asset?.id,
+                            externalLink: 'https://updated.com',
+                            position: 1,
+                            translations: existingSection.translations.map((t: any) => ({
+                                id: t.id,
+                                languageCode: t.languageCode,
+                                title: 'Updated',
+                                description: t.description,
+                                callToAction: t.callToAction,
+                            })),
+                        },
+                        {
+                            assetId: asset.id,
+                            externalLink: 'https://new-section.com',
+                            position: 2,
+                            translations: [
+                                {
+                                    languageCode: LanguageCode.en,
+                                    title: 'New Section',
+                                    description: 'New Desc',
+                                    callToAction: 'New CTA',
+                                },
+                            ],
+                        },
+                    ],
+                },
+            });
+
+            expect(updateResult.updateBanner.sections).toHaveLength(2);
+            expect(updateResult.updateBanner.sections[0].externalLink).toBe('https://updated.com');
+            expect(updateResult.updateBanner.sections[0].translations[0].title).toBe('Updated');
+            expect(updateResult.updateBanner.sections[1].externalLink).toBe('https://new-section.com');
         });
 
         it('should remove a section', async () => {
@@ -332,7 +570,7 @@ describe('Banner Admin API', () => {
             });
             expect(result.sections).toHaveLength(2);
             // Remove the first section
-            const deleteResult = await adminClient.query<DeleteBannerSectionMutation>(DELETE_BANNER_SECTION, {
+            const deleteResult = await adminClient.query(DELETE_BANNER_SECTION, {
                 input: {
                     id: result.sections?.[0]?.id ?? '',
                 },
@@ -354,7 +592,7 @@ describe('Banner Shop API', () => {
             name,
         });
 
-        const fetchResult = await shopClient.query(getBannerByNameDocument, {
+        const fetchResult = await shopClient.query(GET_BANNER_BY_NAME, {
             name,
         });
 
@@ -366,53 +604,30 @@ describe('Banner Shop API', () => {
         const result = await createBanner({
             name: name,
         });
-        const fetchResult = await shopClient.query(GET_BANNER, {
+        const fetchResult = await shopClient.query(GET_BANNER_SHOP, {
             id: result.id,
         });
         expect(fetchResult.banner.id).toBe(result.id);
     });
 
-    it('should throw and error if the banner is not found', async () => {
-        const name = 'banner_not_found';
-        try {
-            await shopClient.query(getBannerByNameDocument, {
-                name,
-            });
-        } catch (error) {
-            expect(error).toBeDefined();
-        }
+    it('should throw an error if the banner is not found', async () => {
+        await expect(shopClient.query(GET_BANNER_BY_NAME, { name: 'nonexistent_banner' })).rejects.toThrow();
 
-        try {
-            await shopClient.query(GET_BANNER, {
-                id: '123',
-            });
-        } catch (error) {
-            expect(error).toBeDefined();
-        }
+        await expect(shopClient.query(GET_BANNER_SHOP, { id: '999999' })).rejects.toThrow();
     });
 
     it('should return an error if the banner is not enabled', async () => {
-        const name = 'banner_not_enabled';
         const result = await createBanner({
             input: {
-                name,
+                name: 'shop_disabled_banner',
                 enabled: false,
             },
         });
-        try {
-            await shopClient.query(getBannerByNameDocument, {
-                name,
-            });
-        } catch (error) {
-            expect(error).toBeDefined();
-        }
 
-        try {
-            await shopClient.query(GET_BANNER, {
-                id: result.id,
-            });
-        } catch (error) {
-            expect(error).toBeDefined();
-        }
+        await expect(
+            shopClient.query(GET_BANNER_BY_NAME, { name: 'shop_disabled_banner' }),
+        ).rejects.toThrow();
+
+        await expect(shopClient.query(GET_BANNER_SHOP, { id: result.id })).rejects.toThrow();
     });
 });

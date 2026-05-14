@@ -1,0 +1,171 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-03-16 12:00+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: pl\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Add Section"
+msgstr "Dodaj sekcję"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Banner created successfully"
+msgstr "Baner został pomyślnie utworzony"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Banner updated successfully"
+msgstr "Baner został pomyślnie zaktualizowany"
+
+#: src/dashboard/components/banner-list.tsx
+msgid "Banners"
+msgstr "Banery"
+
+#: src/dashboard/components/banner-section/components/content-fields.tsx
+msgid "Call to Action"
+msgstr "Wezwanie do działania"
+
+#: src/dashboard/components/banner-section/components/cover-image.tsx
+msgid "Change"
+msgstr "Zmień"
+
+#: src/dashboard/components/banner-section/components/link-selector.tsx
+msgid "Collection"
+msgstr "Kolekcja"
+
+#: src/dashboard/components/banner-section/components/cover-image.tsx
+msgid "Cover Image"
+msgstr "Zdjęcie okładki"
+
+#: src/dashboard/components/banner-section/components/cover-image.tsx
+msgid "Cover image is required"
+msgstr "Zdjęcie okładki jest wymagane"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Create"
+msgstr "Utwórz"
+
+#: src/dashboard/components/banner-list.tsx
+msgid "Create Banner"
+msgstr "Utwórz baner"
+
+#: src/dashboard/components/banner-section/components/header.tsx
+msgid "Delete"
+msgstr "Usuń"
+
+#: src/dashboard/components/banner-section/components/content-fields.tsx
+msgid "Description"
+msgstr "Opis"
+
+#: src/dashboard/components/banner-list.tsx
+msgid "Disabled"
+msgstr "Wyłączony"
+
+#: src/dashboard/components/banner-section/components/content-fields.tsx
+msgid "e.g. Shop Now"
+msgstr "np. Kup teraz"
+
+#: src/dashboard/components/banner-detail.tsx
+#: src/dashboard/components/banner-list.tsx
+msgid "Enabled"
+msgstr "Włączony"
+
+#: src/dashboard/components/banner-section/components/link-selector.tsx
+msgid "External Link"
+msgstr "Link zewnętrzny"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Failed to delete section"
+msgstr "Nie udało się usunąć sekcji"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Failed to update banner"
+msgstr "Nie udało się zaktualizować banera"
+
+#: src/dashboard/components/banner-section/components/cover-image.tsx
+msgid "Landscape images work best as banner backgrounds."
+msgstr "Obrazy poziome najlepiej nadają się jako tła banerów."
+
+#: src/dashboard/components/banner-section/components/link-selector.tsx
+msgid "Link"
+msgstr "Link"
+
+#: src/dashboard/components/banner-section/components/search-results.tsx
+msgid "Loading..."
+msgstr "Ładowanie..."
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Name"
+msgstr "Nazwa"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "New Banner"
+msgstr "Nowy baner"
+
+#: src/dashboard/components/banner-section/components/search-results.tsx
+msgid "No results found"
+msgstr "Nie znaleziono wyników"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "No sections yet. Click \"Add Section\" to create one."
+msgstr "Nie ma jeszcze sekcji. Kliknij \"Dodaj sekcję\", aby utworzyć."
+
+#: src/dashboard/components/banner-section/components/link-selector.tsx
+msgid "Product"
+msgstr "Produkt"
+
+#: src/dashboard/components/banner-section/components/link-selector.tsx
+msgid "Search for a collection..."
+msgstr "Szukaj kolekcji..."
+
+#: src/dashboard/components/banner-section/components/link-selector.tsx
+msgid "Search for a product..."
+msgstr "Szukaj produktu..."
+
+#: src/dashboard/components/banner-list.tsx
+msgid "Section Count"
+msgstr "Liczba sekcji"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Section deleted successfully"
+msgstr "Sekcja została pomyślnie usunięta"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Sections"
+msgstr "Sekcje"
+
+#: src/dashboard/components/banner-section/components/cover-image.tsx
+msgid "Select cover image"
+msgstr "Wybierz zdjęcie okładki"
+
+#: src/dashboard/components/banner-section/components/cover-image.tsx
+msgid "Select Cover Image"
+msgstr "Wybierz zdjęcie okładki"
+
+#: src/dashboard/components/banner-section/components/content-fields.tsx
+msgid "Title"
+msgstr "Tytuł"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Unknown error"
+msgstr "Nieznany błąd"
+
+#: src/dashboard/components/banner-section/components/header.tsx
+msgid "Untitled Section"
+msgstr "Sekcja bez nazwy"
+
+#: src/dashboard/components/banner-detail.tsx
+msgid "Update"
+msgstr "Zaktualizuj"
+
+#: src/dashboard/components/banner-section/components/link-selector.tsx
+msgid "URL"
+msgstr "URL"

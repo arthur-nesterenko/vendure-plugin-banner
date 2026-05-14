@@ -28,6 +28,7 @@ lib/
 libpeerconnection.log
 node_modules
 out-tsc
+*.tsbuildinfo
 speed-measure-plugin*.json
 tmp
 typings

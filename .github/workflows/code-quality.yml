@@ -1,5 +1,9 @@
 name: Code Quality
 
+concurrency:
+    group: code-quality-${{ github.head_ref }}
+    cancel-in-progress: true
+
 on:
     pull_request:
         branches:
@@ -19,16 +23,19 @@ jobs:
                   node-version: 22
 
             - name: Install dependencies
-              run: yarn install --frozen-lockfile
+              run: npm ci
+
+            - name: Install sharp for Linux
+              run: npm install --os=linux --cpu=x64 sharp
 
             - name: Run Prettier
-              run: yarn prettify --check
+              run: npm run prettify -- --check
 
             - name: Run ESLint
-              run: yarn lint
+              run: npm run lint
 
             - name: Run TypeScript type check
-              run: yarn tsc --noEmit
+              run: npx tsc --noEmit
 
             - name: Run E2E tests
-              run: yarn e2e
+              run: npm run e2e

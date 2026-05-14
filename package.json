@@ -1,12 +1,28 @@
 {
     "name": "vendure-banner-plugin",
-    "version": "1.0.5",
-    "description": "A plugin for the Vendure e-commerce framework designed to enhance the visual appeal and interactivity of your e-commerce site by allowing for the creation of dynamic banners that can be added to any page.",
-    "author": "Arthur Nestererenko <arthur.nesterenko.dev@gmail.com>",
+    "version": "2.0.0",
+    "description": "Vendure plugin for dynamic, multi-section promotional banners with translatable content and drag-and-drop reordering.",
+    "keywords": [
+        "vendure",
+        "vendure-plugin",
+        "vendure-banner-plugin",
+        "banner",
+        "promotion",
+        "marketing",
+        "cms",
+        "dashboard-extension",
+        "translatable",
+        "ecommerce"
+    ],
+    "author": "Arthur Nesterenko <arthur.nesterenko.dev@gmail.com>",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/arthur-nesterenko/vendure-plugin-banner.git"
     },
+    "bugs": {
+        "url": "https://github.com/arthur-nesterenko/vendure-plugin-banner/issues"
+    },
+    "homepage": "https://github.com/arthur-nesterenko/vendure-plugin-banner#readme",
     "license": "MIT",
     "private": false,
     "engines": {
@@ -14,26 +30,40 @@
     },
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        },
+        "./dashboard/*": "./dist/dashboard/*",
+        "./package.json": "./package.json"
+    },
     "files": [
         "dist",
-        "README.md"
+        "README.md",
+        "CHANGELOG.md",
+        "LICENSE"
     ],
     "scripts": {
         "run:server": "ts-node ./dev-server/index.ts",
         "run:worker": "ts-node ./dev-server/index-worker.ts",
         "watch": "ts-node-dev  ./dev-server/index.ts",
         "start": "concurrently npm:run:*",
-        "build": "rimraf dist && yarn codegen && tsc -p ./tsconfig.build.json && yarn copy-assets",
+        "build": "rimraf dist && npm run codegen && tsc -p ./tsconfig.build.json && npm run copy-assets",
         "copy-assets": "ts-node scripts/copy-assets.ts",
         "codegen": "ts-node codegen.ts",
         "prepare": "husky",
         "lint": "eslint .",
         "prettify": "prettier --write . --html-whitespace-sensitivity ignore",
-        "lint:fix": "npm run lint --fix",
+        "lint:fix": "eslint . --fix",
         "commit": "git-cz",
-        "e2e": "vitest",
-        "e2e:watch": "vitest --watch",
-        "tsc": "tsc --noEmit"
+        "e2e": "vitest run --project e2e",
+        "e2e:watch": "vitest --project e2e --watch",
+        "test:unit": "vitest run --project unit",
+        "test:unit:watch": "vitest --project unit --watch",
+        "test": "vitest run",
+        "tsc": "tsc --noEmit",
+        "i18n:extract": "lingui extract"
     },
     "devDependencies": {
         "@commitlint/cli": "^19.7.1",
@@ -44,16 +74,22 @@
         "@graphql-codegen/typescript": "^4.1.6",
         "@graphql-codegen/typescript-document-nodes": "^4.0.16",
         "@graphql-codegen/typescript-operations": "^4.6.1",
+        "@lingui/cli": "^5.7.0",
+        "@lingui/core": "^5.7.0",
+        "@lingui/format-po": "^5.7.0",
+        "@lingui/react": "^5.7.0",
         "@swc/core": "^1.11.31",
+        "@testing-library/jest-dom": "^6.6.3",
+        "@testing-library/react": "^16.0.1",
+        "@testing-library/user-event": "^14.5.2",
         "@types/eslint__js": "^8.42.3",
         "@types/fs-extra": "^11.0.4",
         "@types/node": "^22.15.30",
-        "@vendure/admin-ui-plugin": "3.3.3",
-        "@vendure/asset-server-plugin": "3.3.3",
-        "@vendure/core": "^3.3.3",
-        "@vendure/graphiql-plugin": "^3.3.3",
-        "@vendure/testing": "^3.3.3",
-        "@vendure/ui-devkit": "^3.3.3",
+        "@vendure/asset-server-plugin": "3.6.3",
+        "@vendure/core": "3.6.3",
+        "@vendure/dashboard": "^3.6.3",
+        "@vendure/graphiql-plugin": "3.6.3",
+        "@vendure/testing": "3.6.3",
         "better-sqlite3": "^11.10.0",
         "commitizen": "^4.3.1",
         "concurrently": "^9.1.2",
@@ -64,10 +100,14 @@
         "eslint-plugin-import": "^2.31.0",
         "eslint-plugin-prettier": "^5.2.3",
         "fs-extra": "^11.3.0",
+        "globals": "^17.4.0",
         "graphql-tag": "^2.12.6",
         "husky": "^9.1.7",
         "inquirer": "9",
+        "jsdom": "^25.0.1",
         "prettier": "^3.5.3",
+        "react": "^19.2.4",
+        "react-dom": "^19.2.4",
         "rimraf": "^6.0.1",
         "ts-node": "10.9.2",
         "ts-node-dev": "^2.0.0",
@@ -75,5 +115,14 @@
         "typescript-eslint": "^8.25.0",
         "unplugin-swc": "^1.5.4",
         "vitest": "^3.2.3"
+    },
+    "peerDependencies": {
+        "@vendure/core": "^3.0.0",
+        "@vendure/dashboard": "^3.0.0"
+    },
+    "dependencies": {
+        "@dnd-kit/core": "^6.3.1",
+        "@dnd-kit/sortable": "^10.0.0",
+        "@dnd-kit/utilities": "^3.2.2"
     }
 }

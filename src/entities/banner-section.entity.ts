@@ -4,6 +4,16 @@ import { Entity, OneToMany, ManyToOne, JoinColumn, JoinTable, Column } from 'typ
 import { BannerSectionTranslation } from './banner-section-translation.entity';
 import { Banner } from './banner.entity';
 
+/**
+ * @description
+ * A `BannerSection` is a single visual unit within a {@link Banner}. It
+ * carries a cover {@link Asset} together with translatable text
+ * (title, description, call-to-action) and a link target — either a
+ * {@link Product}, a {@link Collection}, or an `externalLink` URL.
+ * Sections within a banner are ordered by `position`.
+ *
+ * @category Entities
+ */
 @Entity()
 export class BannerSection extends VendureEntity implements Translatable {
     constructor(input?: DeepPartial<BannerSection>) {

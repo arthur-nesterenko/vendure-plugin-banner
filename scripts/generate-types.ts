@@ -38,7 +38,6 @@ export async function generateTypes(
          * The directory of the plugin.
          */
         pluginDir: string;
-        ui: boolean;
         common: boolean;
     },
 ) {
@@ -80,16 +79,6 @@ export async function generateTypes(
         tasks.push(
             generateTypes('shop', 'src/generated-shop-types.ts'),
             generateTypes('admin', 'src/generated-admin-types.ts'),
-        );
-    }
-
-    if (options.ui) {
-        tasks.push(
-            generateTypes(
-                'admin',
-                'src/ui/generated-types.ts',
-                path.join(options.pluginDir, 'src/ui/**/*.ts'),
-            ),
         );
     }
 
