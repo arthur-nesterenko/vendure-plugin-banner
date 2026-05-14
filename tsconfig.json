@@ -12,6 +12,7 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "target": "es2017",
+        "useDefineForClassFields": false,
         "strict": true,
         "strictPropertyInitialization": false,
         "sourceMap": false,
