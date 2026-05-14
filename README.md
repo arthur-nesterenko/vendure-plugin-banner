@@ -7,6 +7,14 @@
 
 A plugin for [Vendure](https://www.vendure.io/) that adds dynamic promotional banners to your e-commerce store. Create banners with multiple sections, each featuring translatable content, cover images, and links to products, collections, or external URLs.
 
+## Preview
+
+![Banner list page in the Vendure dashboard](./docs/images/banner-list.png)
+_All banners at a glance — section count and enabled state visible without drilling in._
+
+![Banner editor with multi-section content and translations](./docs/images/banner-detail.png)
+_Multi-section editor with translatable content, link picker, and drag-and-drop reordering._
+
 ## Version Compatibility
 
 | Plugin version | Vendure version | Admin UI | Status |
