@@ -156,6 +156,55 @@ export class BannerCacheInvalidator implements OnApplicationBootstrap {
 
 A real-world use case: invalidating an [Stellate](https://stellate.co/) edge cache for the storefront whenever banners change, so customers always see fresh content without sacrificing CDN performance.
 
+## Translations
+
+The plugin handles two distinct kinds of translation — they're independent, so don't confuse them.
+
+### 1. Banner content (storefront-facing)
+
+Every `BannerSection` carries one translation row per language for `title`, `description`, and `callToAction`. Send translations as part of the input when creating or updating a banner via the Admin API:
+
+```graphql
+mutation {
+    createBanner(input: {
+        name: "homepage-hero"
+        enabled: true
+        sections: [{
+            assetId: "1"
+            position: 1
+            translations: [
+                { languageCode: en, title: "Summer Sale", description: "Up to 50% off", callToAction: "Shop now" }
+                { languageCode: de, title: "Sommer-Sale", description: "Bis zu 50% Rabatt", callToAction: "Jetzt einkaufen" }
+            ]
+        }]
+    }) {
+        id
+    }
+}
+```
+
+On the Shop API, banners are returned already translated for the requesting client's language — the plugin resolves the right translation row based on the standard Vendure `languageCode` query argument or `Accept-Language` header. If a section has no translation for the requested language, Vendure falls back to the channel's default.
+
+### 2. Dashboard UI (contributor-facing)
+
+The admin dashboard UI is translated with [Lingui](https://lingui.dev). Catalogs live in `src/dashboard/i18n/{en,uk,pl}.po`. To add a new language:
+
+1. Add the locale to `lingui.config.js`:
+
+    ```js
+    locales: ['en', 'uk', 'pl', 'de'],
+    ```
+
+2. Extract messages — this creates `de.po` and refreshes the existing catalogs:
+
+    ```bash
+    npm run i18n:extract
+    ```
+
+3. Translate the generated `de.po` (fill in the `msgstr` values).
+
+After any code change that adds or edits a `<Trans>` element or `` t`…` `` call, run `npm run i18n:extract` again so all catalogs stay in sync.
+
 ## Migrating from v1 to v2
 
 v2 is a major update that replaces the Angular admin UI with a native React-based Vendure Dashboard extension. **The backend API and database schema are unchanged** — no data migration is needed.
@@ -211,17 +260,43 @@ npm install vendure-banner-plugin@^1.0.0
 
 The v1 branch receives security fixes only. New features are developed exclusively on v2.
 
-## Development
+## Contributing
+
+Contributions are welcome — bug fixes, new languages, and feature ideas alike. File issues on the [issue tracker](https://github.com/arthur-nesterenko/vendure-plugin-banner/issues).
+
+### Local setup
 
 ```bash
-npm install          # Install dependencies
-npm run start        # Start dev server
-npm run e2e          # Run e2e tests
-npm run test:unit    # Run unit tests
-npm run lint         # Lint
-npm run prettify     # Format
-npm run build        # Production build
+git clone https://github.com/arthur-nesterenko/vendure-plugin-banner.git
+cd vendure-plugin-banner
+npm install        # Node >=22 required
+npm run start      # Vendure on http://localhost:4000, dashboard at /dashboard
 ```
+
+Login is `superadmin` / `superadmin`. The local dev database is `banner-vendure.sqlite` — delete it to reset.
+
+### Commands
+
+```bash
+npm run codegen      # Regenerate generated-{admin,shop}-types.ts after schema changes
+npm run test:unit    # Dashboard component tests (Vitest + jsdom)
+npm run e2e          # Backend e2e tests (real Vendure test server)
+npm run lint         # ESLint
+npm run prettify     # Prettier
+npm run build        # Production build
+npm run i18n:extract # Refresh Lingui catalogs
+```
+
+Run a single test file with `npx vitest run --project unit <path>` or `--project e2e <path>`.
+
+### Pull request guidelines
+
+- **Conventional commits** are enforced (commitlint + husky). Use `npm run commit` if unsure of the prefix.
+- Target the `main` branch. The `v1` branch is in security-fix maintenance only.
+- Releases are automated via [release-please](https://github.com/googleapis/release-please) — `feat`, `fix`, `perf`, `deps`, `docs`, `revert` show up in the CHANGELOG; `chore`, `test`, `ci`, `build`, `style`, `refactor` are hidden.
+- Run `npm run lint && npm run test:unit && npm run e2e` locally before opening the PR — CI runs the same checks.
+
+For architecture details and gotchas when navigating the code, see [AGENTS.md](./AGENTS.md).
 
 ## License
 
